@@ -159,7 +159,7 @@ impl eframe::App for PyeguiApp {
 /// 	if button_clicked("click me"):
 ///			print("clicked")
 ///
-/// run_simple_native("My app", update_func)
+/// run_native("My app", update_func)
 #[pyfunction]
 unsafe fn run_native(
     app_name: &str,
@@ -167,7 +167,7 @@ unsafe fn run_native(
     update_fun: Bound<'_, PyFunction>,
 ) -> PyResult<()> {
 	// ensure thread safety 
-	let _lock = APP_MUTEX.try_lock().expect(APP_MUTEX_ERR);
+	let _lock = APP_MUTEX.try_lock().map_err(|_| PyRuntimeError::new_err(APP_MUTEX_ERR))?;
 	// init UI stack
 	let mut ui_stack = Vec::with_capacity(32);
 	UI = &raw mut *&mut ui_stack;
@@ -187,7 +187,7 @@ unsafe fn run_native(
 
 	match result {
 		Ok(_) => Ok(()),
-		Err(err) => return Err(PyRuntimeError::new_err(format!("Cannot create a window: {}", err.to_string())))
+		Err(err) => Err(PyRuntimeError::new_err(format!("Cannot create a window: {}", err.to_string())))
 	}
 }
 
@@ -206,6 +206,21 @@ unsafe fn last_ui(ui_stack: &mut Vec<*mut egui::Ui>) -> PyResult<&mut egui::Ui> 
 unsafe fn current_ui(ui: &*mut Vec<*mut egui::Ui>) -> PyResult<&mut egui::Ui> {
   last_ui(ui_stack(ui)?)  
 }
+
+unsafe fn run_nested_update_func(ui: &mut egui::Ui, update_fun: Bound<'_, PyFunction>) -> PyResult<()> {
+  let ui_stack = ui_stack(&UI).unwrap_unchecked();
+
+  ui_stack.push(&raw mut *ui);
+
+  if let Err(err) = update_fun.call0() {
+    println!("update_fun threw an error: {}", err.to_string());
+  }
+
+  match ui_stack.pop() {
+    Some(_) => Ok(()),
+    None => Err(PyRuntimeError::new_err(UI_STACK_ERR))
+  }
+} 
 
 // UI functions
 
@@ -371,62 +386,20 @@ unsafe fn small_button_clicked(text: &str) -> PyResult<bool> {
 #[pyfunction]
 unsafe fn horizontal(update_fun: Bound<'_, PyFunction>) -> PyResult<()> {
 
-	match current_ui(&UI)?.horizontal(|ui| {
-	  let ui_stack = ui_stack(&UI).unwrap_unchecked();
-
-		ui_stack.push(&raw mut *ui);
-
-		if let Err(err) = update_fun.call0() {
-			println!("update_fun threw an error: {}", err.to_string());
-		}
-
-		ui_stack.pop()
-
-	}).inner {
-    Some(_) => Ok(()),
-    None => Err(PyRuntimeError::new_err(UI_STACK_ERR))
-  }
+	current_ui(&UI)?.horizontal(|ui| run_nested_update_func(ui, update_fun)).inner
 }
 
 /// Like horizontal, but allocates the full vertical height and then centers elements vertically.
 #[pyfunction]
 unsafe fn horizontal_centered(update_fun: Bound<'_, PyFunction>) -> PyResult<()> {
 
-	match current_ui(&UI)?.horizontal_centered(|ui| {
-    let ui_stack = ui_stack(&UI).unwrap_unchecked();
-
-		ui_stack.push(&raw mut *ui);
-
-		if let Err(err) = update_fun.call0() {
-			println!("update_fun threw an error: {}", err.to_string());
-		}
-
-		ui_stack.pop()
-
-	}).inner {
-    Some(_) => Ok(()),
-    None => Err(PyRuntimeError::new_err(UI_STACK_ERR))
-  }
+  current_ui(&UI)?.horizontal_centered(|ui| run_nested_update_func(ui, update_fun)).inner
 }
 /// Like horizontal, but aligns content with top.
 #[pyfunction]
 unsafe fn horizontal_top(update_fun: Bound<'_, PyFunction>) -> PyResult<()> {
 
-	match current_ui(&UI)?.horizontal_top(|ui| {
-    let ui_stack = ui_stack(&UI).unwrap_unchecked();
-
-		ui_stack.push(&raw mut *ui);
-
-		if let Err(err) = update_fun.call0() {
-			println!("update_fun threw an error: {}", err.to_string());
-		}
-
-		ui_stack.pop()
-
-	}).inner {
-    Some(_) => Ok(()),
-    None => Err(PyRuntimeError::new_err(UI_STACK_ERR))
-  }
+  current_ui(&UI)?.horizontal_top(|ui| run_nested_update_func(ui, update_fun)).inner
 }
 
 /// Start a ui with horizontal layout that wraps to a new row when it reaches the right edge of the max_size. After you have called this, the function registers the contents as any other widget.
@@ -435,21 +408,7 @@ unsafe fn horizontal_top(update_fun: Bound<'_, PyFunction>) -> PyResult<()> {
 #[pyfunction]
 unsafe fn horizontal_wrapped(update_fun: Bound<'_, PyFunction>) -> PyResult<()> {
 
-	match current_ui(&UI)?.horizontal_wrapped(|ui| {
-    let ui_stack = ui_stack(&UI).unwrap_unchecked();
-
-		ui_stack.push(&raw mut *ui);
-
-		if let Err(err) = update_fun.call0() {
-			println!("update_fun threw an error: {}", err.to_string());
-		}
-
-		ui_stack.pop()
-
-	}).inner {
-    Some(_) => Ok(()),
-    None => Err(PyRuntimeError::new_err(UI_STACK_ERR))
-  }
+  current_ui(&UI)?.horizontal_wrapped(|ui| run_nested_update_func(ui, update_fun)).inner
 }
 
 
@@ -462,22 +421,10 @@ unsafe fn horizontal_wrapped(update_fun: Bound<'_, PyFunction>) -> PyResult<()> 
 #[pyfunction]
 unsafe fn collapsing(heading: &str, update_fun: Bound<'_, PyFunction>) -> PyResult<()> {
 
-	match current_ui(&UI)?.collapsing(heading, |ui| {
-
-    let ui_stack = ui_stack(&UI).unwrap_unchecked();
-
-		ui_stack.push(&raw mut *ui);
-
-		if let Err(err) = update_fun.call0() {
-			println!("update_fun threw an error: {}", err.to_string());
-		}
-
-		ui_stack.pop()
-
-	}).body_returned.unwrap() {
-    Some(_) => Ok(()),
-    None => Err(PyRuntimeError::new_err(UI_STACK_ERR))
-  }
+  current_ui(&UI)?
+    .collapsing(heading, |ui| run_nested_update_func(ui, update_fun))
+    .body_returned
+    .unwrap()
 }
 
 /// Create a child ui which is indented to the right.
@@ -488,21 +435,7 @@ unsafe fn collapsing(heading: &str, update_fun: Bound<'_, PyFunction>) -> PyResu
 #[pyfunction]
 unsafe fn indent(update_fun: Bound<'_, PyFunction>) -> PyResult<()> {
 
-	match current_ui(&UI)?.indent("your mom", |ui| {
-    let ui_stack = ui_stack(&UI).unwrap_unchecked();
-
-		ui_stack.push(&raw mut *ui);
-
-		if let Err(err) = update_fun.call0() {
-			println!("update_fun threw an error: {}", err.to_string());
-		}
-
-		ui_stack.pop()
-
-	}).inner {
-    Some(_) => Ok(()),
-    None => Err(PyRuntimeError::new_err(UI_STACK_ERR))
-  }
+  current_ui(&UI)?.indent("your mom", |ui| run_nested_update_func(ui, update_fun)).inner
 }
 
 /// Visually groups the contents together.
@@ -516,21 +449,7 @@ unsafe fn indent(update_fun: Bound<'_, PyFunction>) -> PyResult<()> {
 #[pyfunction]
 unsafe fn group(update_fun: Bound<'_, PyFunction>) -> PyResult<()> {
 
-	match current_ui(&UI)?.group(|ui| {
-    let ui_stack = ui_stack(&UI).unwrap_unchecked();
-
-		ui_stack.push(&raw mut *ui);
-
-		if let Err(err) = update_fun.call0() {
-			println!("update_fun threw an error: {}", err.to_string());
-		}
-
-		ui_stack.pop()
-
-	}).inner {
-    Some(_) => Ok(()),
-    None => Err(PyRuntimeError::new_err(UI_STACK_ERR))
-  }
+  current_ui(&UI)?.group(|ui| run_nested_update_func(ui, update_fun)).inner
 }
 
 /// Create a scoped child ui.
@@ -547,22 +466,7 @@ unsafe fn group(update_fun: Bound<'_, PyFunction>) -> PyResult<()> {
 #[pyfunction]
 unsafe fn scope(update_fun: Bound<'_, PyFunction>) -> PyResult<()> {
 
-	match current_ui(&UI)?.scope(|ui| {
-
-    let ui_stack = ui_stack(&UI).unwrap_unchecked();
-
-		ui_stack.push(&raw mut *ui);
-
-		if let Err(err) = update_fun.call0() {
-			println!("update_fun threw an error: {}", err.to_string());
-		}
-
-		ui_stack.pop()
-
-	}).inner {
-    Some(_) => Ok(()),
-    None => Err(PyRuntimeError::new_err(UI_STACK_ERR))
-  }
+  current_ui(&UI)?.scope(|ui| run_nested_update_func(ui, update_fun)).inner
 }
 
 /// Control float with a slider.
@@ -899,22 +803,7 @@ unsafe fn disable() -> PyResult<()> {
 #[pyfunction]
 unsafe fn add_enabled(enabled: bool, update_fun: Bound<'_, PyFunction>) -> PyResult<()> {
 
-	match current_ui(&UI)?.add_enabled_ui(enabled, |ui| {
-
-    let ui_stack = ui_stack(&UI).unwrap_unchecked();
-
-		ui_stack.push(&raw mut *ui);
-
-		if let Err(err) = update_fun.call0() {
-			println!("update_fun threw an error: {}", err.to_string());
-		}
-
-		ui_stack.pop()
-
-	}).inner {
-    Some(_) => Ok(()),
-    None => Err(PyRuntimeError::new_err(UI_STACK_ERR))
-  }
+  current_ui(&UI)?.add_enabled_ui(enabled, |ui| run_nested_update_func(ui, update_fun)).inner
 }
 
 /// Make the widget in this Ui semi-transparent.
