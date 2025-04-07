@@ -51,12 +51,22 @@ impl Context {
   fn set_system_theme(&self) {
     self.0.set_theme(egui::ThemePreference::System);        
   }
+
+  /// Open an URL in a browser.
+  fn open_url(&self, url: &str) {
+    self.0.open_url(egui::OpenUrl::new_tab(url));
+  }
+
+  /// Copy the given text to the system clipboard.
+  fn copy_text(&self, text: String) {
+    self.0.copy_text(text);
+  }
 }
 
 #[pyclass]
 struct Str {
-	#[pyo3(get, set)]
-	value: String
+  #[pyo3(get, set)]
+  value: String
 }
 
 #[pymethods]
@@ -69,8 +79,8 @@ impl Str {
 
 #[pyclass]
 struct Bool {
-	#[pyo3(get, set)]
-	value: bool
+  #[pyo3(get, set)]
+  value: bool
 }
 
 #[pymethods]
@@ -83,8 +93,8 @@ impl Bool {
 
 #[pyclass]
 struct Int {
-	#[pyo3(get, set)]
-	value: i32
+  #[pyo3(get, set)]
+  value: i32
 }
 
 #[pymethods]
@@ -97,8 +107,8 @@ impl Int {
 
 #[pyclass]
 struct Float {
-	#[pyo3(get, set)]
-	value: f32
+  #[pyo3(get, set)]
+  value: f32
 }
 
 #[pymethods]
@@ -112,11 +122,11 @@ impl Float {
 
 #[pyclass]
 struct RGB {
-	#[pyo3(get, set)]
+  #[pyo3(get, set)]
   r: f32,
-	#[pyo3(get, set)]
+  #[pyo3(get, set)]
   g: f32,
-	#[pyo3(get, set)]
+  #[pyo3(get, set)]
   b: f32,
 }
 
@@ -130,8 +140,8 @@ impl RGB {
 
 #[pyclass]
 struct Date {
-	#[pyo3(get, set)]
-	value: NaiveDate
+  #[pyo3(get, set)]
+  value: NaiveDate
 }
 
 #[pymethods]
@@ -150,7 +160,7 @@ struct PyeguiApp;
 impl eframe::App for PyeguiApp {
   fn update(&mut self, ctx: &egui::Context, _frame: &mut eframe::Frame) {
 
-		let ctx_r = Context(ctx.clone());
+    let ctx_r = Context(ctx.clone());
 
     unsafe {
 
@@ -179,11 +189,11 @@ impl eframe::App for PyeguiApp {
 /// name = Str("")
 ///
 /// def update_func(ctx):
-/// 	heading(f"Hello, {name.value}!")
-///		text_edit_singleline(name)
+///   heading(f"Hello, {name.value}!")
+///   text_edit_singleline(name)
 /// 
-/// 	if button_clicked("click me"):
-///			print("clicked")
+///   if button_clicked("click me"):
+///     print("clicked")
 ///
 /// run_native("My app", update_func)
 #[pyfunction]
@@ -192,15 +202,15 @@ unsafe fn run_native(
     // native_options: eframe::NativeOptions,
     update_fun: Bound<'_, PyFunction>,
 ) -> PyResult<()> {
-	// ensure thread safety 
-	let _lock = APP_MUTEX.try_lock().map_err(|_| PyRuntimeError::new_err(APP_MUTEX_ERR))?;
-	// init UI stack
-	let mut ui_stack = Vec::with_capacity(32);
-	UI = &raw mut *&mut ui_stack;
-	// set update_func
-	UPDATE_FUNC = &raw const *&update_fun.unbind();
-	// create a window
-	let result = eframe::run_native(
+  // ensure thread safety 
+  let _lock = APP_MUTEX.try_lock().map_err(|_| PyRuntimeError::new_err(APP_MUTEX_ERR))?;
+  // init UI stack
+  let mut ui_stack = Vec::with_capacity(32);
+  UI = &raw mut *&mut ui_stack;
+  // set update_func
+  UPDATE_FUNC = &raw const *&update_fun.unbind();
+  // create a window
+  let result = eframe::run_native(
         app_name,
         eframe::NativeOptions::default(),
         Box::new(|cc| {
@@ -211,10 +221,10 @@ unsafe fn run_native(
         }),
   );
 
-	match result {
-		Ok(_) => Ok(()),
-		Err(err) => Err(PyRuntimeError::new_err(format!("Cannot create a window: {}", err.to_string())))
-	}
+  match result {
+    Ok(_) => Ok(()),
+    Err(err) => Err(PyRuntimeError::new_err(format!("Cannot create a window: {}", err.to_string())))
+  }
 }
 
 // helpers
@@ -256,9 +266,9 @@ unsafe fn run_nested_update_func(ui: &mut egui::Ui, update_fun: Bound<'_, PyFunc
 /// heading("hello") 
 #[pyfunction]
 unsafe fn heading(text: &str) -> PyResult<()> {
-	let ui = current_ui(&UI)?;
+  let ui = current_ui(&UI)?;
 
-	ui.heading(text);
+  ui.heading(text);
   Ok(())
 }
 
@@ -268,9 +278,9 @@ unsafe fn heading(text: &str) -> PyResult<()> {
 /// monospace("hello") 
 #[pyfunction]
 unsafe fn monospace(text: &str) -> PyResult<()>  {
-	let ui = current_ui(&UI)?;
+  let ui = current_ui(&UI)?;
 
-	ui.monospace(text);
+  ui.monospace(text);
   Ok(())
 }
 
@@ -280,9 +290,9 @@ unsafe fn monospace(text: &str) -> PyResult<()>  {
 /// small("hello") 
 #[pyfunction]
 unsafe fn small(text: &str) -> PyResult<()> {
-	let ui = current_ui(&UI)?;
+  let ui = current_ui(&UI)?;
 
-	ui.small(text);
+  ui.small(text);
   Ok(())
 }
 
@@ -292,9 +302,9 @@ unsafe fn small(text: &str) -> PyResult<()> {
 /// strong("hello") 
 #[pyfunction]
 unsafe fn strong(text: &str) -> PyResult<()> {
-	let ui = current_ui(&UI)?;
+  let ui = current_ui(&UI)?;
 
-	ui.strong(text);
+  ui.strong(text);
   Ok(())
 }
 
@@ -304,9 +314,9 @@ unsafe fn strong(text: &str) -> PyResult<()> {
 /// weak("hello") 
 #[pyfunction]
 unsafe fn weak(text: &str) -> PyResult<()> {
-	let ui = current_ui(&UI)?;
+  let ui = current_ui(&UI)?;
 
-	ui.weak(text);
+  ui.weak(text);
   Ok(())
 }
 
@@ -316,9 +326,9 @@ unsafe fn weak(text: &str) -> PyResult<()> {
 /// label("some text") 
 #[pyfunction]
 unsafe fn label(text: &str) -> PyResult<()> {
-	let ui = current_ui(&UI)?;
+  let ui = current_ui(&UI)?;
 
-	ui.label(text);
+  ui.label(text);
   Ok(())
 }
 
@@ -328,9 +338,9 @@ unsafe fn label(text: &str) -> PyResult<()> {
 /// code("print(42 + 27)") 
 #[pyfunction]
 unsafe fn code(text: &str) -> PyResult<()> {
-	let ui = current_ui(&UI)?;
+  let ui = current_ui(&UI)?;
 
-	ui.code(text);
+  ui.code(text);
   Ok(())
 }
 
@@ -342,9 +352,9 @@ unsafe fn code(text: &str) -> PyResult<()> {
 /// code_editor(text)
 #[pyfunction]
 unsafe fn code_editor(text: &mut Str) -> PyResult<()> {
-	let ui = current_ui(&UI)?;
+  let ui = current_ui(&UI)?;
 
-	ui.code_editor(&mut text.value);
+  ui.code_editor(&mut text.value);
   Ok(())
 }
 
@@ -356,9 +366,9 @@ unsafe fn code_editor(text: &mut Str) -> PyResult<()> {
 /// text_edit_singleline(text)
 #[pyfunction]
 unsafe fn text_edit_singleline(text: &mut Str) -> PyResult<()> {
-	let ui = current_ui(&UI)?;
+  let ui = current_ui(&UI)?;
 
-	ui.text_edit_singleline(&mut text.value);
+  ui.text_edit_singleline(&mut text.value);
   Ok(())
 }
 
@@ -370,32 +380,32 @@ unsafe fn text_edit_singleline(text: &mut Str) -> PyResult<()> {
 /// text_edit_multiline(text)
 #[pyfunction]
 unsafe fn text_edit_multiline(text: &mut Str) -> PyResult<()> {
-	let ui = current_ui(&UI)?;
+  let ui = current_ui(&UI)?;
 
-	ui.text_edit_multiline(&mut text.value);
+  ui.text_edit_multiline(&mut text.value);
   Ok(())
 }
 
 /// Returns true if the button was clicked this frame
 /// 
 /// if button_clicked("click me"):
-///		print("click me, my friend")
+///   print("click me, my friend")
 #[pyfunction]
 unsafe fn button_clicked(text: &str) -> PyResult<bool> {
-	let ui = current_ui(&UI)?;
+  let ui = current_ui(&UI)?;
 
-	Ok(ui.button(text).clicked())
+  Ok(ui.button(text).clicked())
 }
 
 /// Returns true if the small button was clicked this frame
 /// 
 /// if small_button_clicked("click me"):
-///		print("click me, my friend")
+///   print("click me, my friend")
 #[pyfunction]
 unsafe fn small_button_clicked(text: &str) -> PyResult<bool> {
-	let ui = current_ui(&UI)?;
+  let ui = current_ui(&UI)?;
 
-	Ok(ui.small_button(text).clicked())
+  Ok(ui.small_button(text).clicked())
 }
 
 /// Start a ui with horizontal layout. After you have called this, the function registers the contents as any other widget.
@@ -406,13 +416,13 @@ unsafe fn small_button_clicked(text: &str) -> PyResult<bool> {
 /// 
 /// Example:
 /// def horizontal_update_func():
-/// 	heading("I'm horizontal")
+///   heading("I'm horizontal")
 /// 
 /// horizontal(horizontal_update_func)
 #[pyfunction]
 unsafe fn horizontal(update_fun: Bound<'_, PyFunction>) -> PyResult<()> {
 
-	current_ui(&UI)?.horizontal(|ui| run_nested_update_func(ui, update_fun)).inner
+  current_ui(&UI)?.horizontal(|ui| run_nested_update_func(ui, update_fun)).inner
 }
 
 /// Like horizontal, but allocates the full vertical height and then centers elements vertically.
@@ -674,7 +684,7 @@ unsafe fn selectable_value(current_value: &mut Int, alternative: i32, text: &str
 ///     combo_box(data, [RED, GREEN, BLUE], ["red", "green", "blue"], "choose your fate")
 #[pyfunction]
 unsafe fn combo_box(current_value: &mut Int, alternatives: Vec<i32>, names: Vec<String>, label: &str) -> PyResult<()> {
-	let ui = current_ui(&UI)?;
+  let ui = current_ui(&UI)?;
 
   egui::ComboBox::from_label(label)
     .selected_text(names.get(current_value.value.try_into().unwrap_or(0)).unwrap_or(&"Unknown".to_string()))
@@ -687,7 +697,7 @@ unsafe fn combo_box(current_value: &mut Int, alternatives: Vec<i32>, names: Vec<
         );
       }
     }
-	);
+  );
   Ok(())
 }
 
@@ -879,59 +889,60 @@ unsafe fn add_space(amount: f32) -> PyResult<()> {
 /// A Python module implemented in Rust.
 #[pymodule]
 fn pyegui(m: &Bound<'_, PyModule>) -> PyResult<()> {
-	// classes
-	m.add_class::<Str>()?;
-	m.add_class::<Bool>()?;
-	m.add_class::<Int>()?;
-	m.add_class::<Float>()?;
-	m.add_class::<RGB>()?;
-	m.add_class::<Date>()?;
-	// functions
-	m.add_function(wrap_pyfunction!(run_native, m)?)?;
-	m.add_function(wrap_pyfunction!(heading, m)?)?;
-	m.add_function(wrap_pyfunction!(monospace, m)?)?;
-	m.add_function(wrap_pyfunction!(small, m)?)?;
-	m.add_function(wrap_pyfunction!(strong, m)?)?;
-	m.add_function(wrap_pyfunction!(weak, m)?)?;
-	m.add_function(wrap_pyfunction!(label, m)?)?;
-	m.add_function(wrap_pyfunction!(code, m)?)?;
-	m.add_function(wrap_pyfunction!(code_editor, m)?)?;
-	m.add_function(wrap_pyfunction!(text_edit_singleline, m)?)?;
-	m.add_function(wrap_pyfunction!(text_edit_multiline, m)?)?;
-	m.add_function(wrap_pyfunction!(button_clicked, m)?)?;
-	m.add_function(wrap_pyfunction!(small_button_clicked, m)?)?;
-	m.add_function(wrap_pyfunction!(horizontal, m)?)?;
-	m.add_function(wrap_pyfunction!(horizontal_centered, m)?)?;
-	m.add_function(wrap_pyfunction!(horizontal_top, m)?)?;
-	m.add_function(wrap_pyfunction!(horizontal_wrapped, m)?)?;
-	m.add_function(wrap_pyfunction!(collapsing, m)?)?;
-	m.add_function(wrap_pyfunction!(indent, m)?)?;
-	m.add_function(wrap_pyfunction!(group, m)?)?;
-	m.add_function(wrap_pyfunction!(scope, m)?)?;
-	m.add_function(wrap_pyfunction!(slider_float, m)?)?;
-	m.add_function(wrap_pyfunction!(slider_int, m)?)?;
-	m.add_function(wrap_pyfunction!(drag_int, m)?)?;
-	m.add_function(wrap_pyfunction!(drag_float, m)?)?;
-	m.add_function(wrap_pyfunction!(hyperlink, m)?)?;
-	m.add_function(wrap_pyfunction!(hyperlink_to, m)?)?;
-	m.add_function(wrap_pyfunction!(link_clicked, m)?)?;
-	m.add_function(wrap_pyfunction!(checkbox, m)?)?;
-	m.add_function(wrap_pyfunction!(radio_value, m)?)?;
-	m.add_function(wrap_pyfunction!(toggle_value, m)?)?;
-	m.add_function(wrap_pyfunction!(selectable_value, m)?)?;
-	m.add_function(wrap_pyfunction!(combo_box, m)?)?;
-	m.add_function(wrap_pyfunction!(progress, m)?)?;
-	m.add_function(wrap_pyfunction!(spinner, m)?)?;
-	m.add_function(wrap_pyfunction!(color_edit_button_rgb, m)?)?;
-	m.add_function(wrap_pyfunction!(image, m)?)?;
-	m.add_function(wrap_pyfunction!(image_and_text_clicked, m)?)?;
-	m.add_function(wrap_pyfunction!(separator, m)?)?;
-	m.add_function(wrap_pyfunction!(set_invisible, m)?)?;
-	m.add_function(wrap_pyfunction!(disable, m)?)?;
-	m.add_function(wrap_pyfunction!(add_enabled, m)?)?;
-	m.add_function(wrap_pyfunction!(set_opacity, m)?)?;
-	m.add_function(wrap_pyfunction!(date_picker_button, m)?)?;
-	m.add_function(wrap_pyfunction!(add_space, m)?)?;
-	Ok(())
+  // classes
+  m.add_class::<Str>()?;
+  m.add_class::<Bool>()?;
+  m.add_class::<Int>()?;
+  m.add_class::<Float>()?;
+  m.add_class::<RGB>()?;
+  m.add_class::<Date>()?;
+  m.add_class::<Context>()?;
+  // functions
+  m.add_function(wrap_pyfunction!(run_native, m)?)?;
+  m.add_function(wrap_pyfunction!(heading, m)?)?;
+  m.add_function(wrap_pyfunction!(monospace, m)?)?;
+  m.add_function(wrap_pyfunction!(small, m)?)?;
+  m.add_function(wrap_pyfunction!(strong, m)?)?;
+  m.add_function(wrap_pyfunction!(weak, m)?)?;
+  m.add_function(wrap_pyfunction!(label, m)?)?;
+  m.add_function(wrap_pyfunction!(code, m)?)?;
+  m.add_function(wrap_pyfunction!(code_editor, m)?)?;
+  m.add_function(wrap_pyfunction!(text_edit_singleline, m)?)?;
+  m.add_function(wrap_pyfunction!(text_edit_multiline, m)?)?;
+  m.add_function(wrap_pyfunction!(button_clicked, m)?)?;
+  m.add_function(wrap_pyfunction!(small_button_clicked, m)?)?;
+  m.add_function(wrap_pyfunction!(horizontal, m)?)?;
+  m.add_function(wrap_pyfunction!(horizontal_centered, m)?)?;
+  m.add_function(wrap_pyfunction!(horizontal_top, m)?)?;
+  m.add_function(wrap_pyfunction!(horizontal_wrapped, m)?)?;
+  m.add_function(wrap_pyfunction!(collapsing, m)?)?;
+  m.add_function(wrap_pyfunction!(indent, m)?)?;
+  m.add_function(wrap_pyfunction!(group, m)?)?;
+  m.add_function(wrap_pyfunction!(scope, m)?)?;
+  m.add_function(wrap_pyfunction!(slider_float, m)?)?;
+  m.add_function(wrap_pyfunction!(slider_int, m)?)?;
+  m.add_function(wrap_pyfunction!(drag_int, m)?)?;
+  m.add_function(wrap_pyfunction!(drag_float, m)?)?;
+  m.add_function(wrap_pyfunction!(hyperlink, m)?)?;
+  m.add_function(wrap_pyfunction!(hyperlink_to, m)?)?;
+  m.add_function(wrap_pyfunction!(link_clicked, m)?)?;
+  m.add_function(wrap_pyfunction!(checkbox, m)?)?;
+  m.add_function(wrap_pyfunction!(radio_value, m)?)?;
+  m.add_function(wrap_pyfunction!(toggle_value, m)?)?;
+  m.add_function(wrap_pyfunction!(selectable_value, m)?)?;
+  m.add_function(wrap_pyfunction!(combo_box, m)?)?;
+  m.add_function(wrap_pyfunction!(progress, m)?)?;
+  m.add_function(wrap_pyfunction!(spinner, m)?)?;
+  m.add_function(wrap_pyfunction!(color_edit_button_rgb, m)?)?;
+  m.add_function(wrap_pyfunction!(image, m)?)?;
+  m.add_function(wrap_pyfunction!(image_and_text_clicked, m)?)?;
+  m.add_function(wrap_pyfunction!(separator, m)?)?;
+  m.add_function(wrap_pyfunction!(set_invisible, m)?)?;
+  m.add_function(wrap_pyfunction!(disable, m)?)?;
+  m.add_function(wrap_pyfunction!(add_enabled, m)?)?;
+  m.add_function(wrap_pyfunction!(set_opacity, m)?)?;
+  m.add_function(wrap_pyfunction!(date_picker_button, m)?)?;
+  m.add_function(wrap_pyfunction!(add_space, m)?)?;
+  Ok(())
 }
 
