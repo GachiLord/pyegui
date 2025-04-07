@@ -27,6 +27,32 @@ static UI_CALL_OUTSIDE_UPDATE_FUNC: &'static str = "UI functions should be calle
 #[pyclass]
 struct Context(egui::Context);
 
+#[pymethods]
+impl Context {
+
+  #[getter]
+  fn is_light_theme(&self) -> bool {
+    self.0.theme() == egui::Theme::Light    
+  }
+
+  #[getter]
+  fn is_dark_theme(&self) -> bool {
+    self.0.theme() == egui::Theme::Dark
+  }
+
+  fn set_light_theme(&self) {
+    self.0.set_theme(egui::ThemePreference::Light);        
+  }
+
+  fn set_dark_theme(&self) {
+    self.0.set_theme(egui::ThemePreference::Dark);        
+  }
+
+  fn set_system_theme(&self) {
+    self.0.set_theme(egui::ThemePreference::System);        
+  }
+}
+
 #[pyclass]
 struct Str {
 	#[pyo3(get, set)]
