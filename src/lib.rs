@@ -1,7 +1,7 @@
 #![allow(static_mut_refs)]
 
 use pyo3::prelude::*;
-use pyo3::{exceptions::PyRuntimeError, types::PyFunction};
+use pyo3::{exceptions::PyRuntimeError, types::{PyFunction, PyFloat, PyDict, PyInt, PyBool}};
 use eframe::{egui, self};
 use egui_extras;
 use std::sync::Mutex;
@@ -182,8 +182,35 @@ impl eframe::App for PyeguiApp {
   }
 }
 
-/// Creates window and runs update_func.
+/// Creates a window and runs update_func.
 /// This is an entrypoint for your GUI application.
+/// 
+/// Parameters:
+/// app_name: str
+///   name displayed at the header bar
+/// update_func: Callable[[Context], None]
+///   your function that draws UI
+/// Kwargs:
+/// inner_height: float
+///   the desired height of the window
+/// inner_width: float
+///   the desired width of the window
+/// min_inner_height: float
+///   min height of the window
+/// min_inner_width: float
+///   min width of the window
+/// max_inner_height: float
+///   max height of the window
+/// max_inner_width: float
+///   max width of the window
+/// fullscreen: bool
+///   whether to open app in fullscreen
+/// maximized: bool
+///   whether to open app maximized
+/// resizable: bool
+///   whether our app is resizable
+/// transparent: bool
+///   whether our app is transparent
 ///
 /// Example:
 /// name = Str("")
@@ -197,10 +224,11 @@ impl eframe::App for PyeguiApp {
 ///
 /// run_native("My app", update_func)
 #[pyfunction]
+#[pyo3(signature = (app_name, update_fun, **kwargs))]
 unsafe fn run_native(
     app_name: &str,
-    // native_options: eframe::NativeOptions,
     update_fun: Bound<'_, PyFunction>,
+    kwargs: Option<&Bound<'_, PyDict>>,
 ) -> PyResult<()> {
   // ensure thread safety 
   let _lock = APP_MUTEX.try_lock().map_err(|_| PyRuntimeError::new_err(APP_MUTEX_ERR))?;
@@ -209,10 +237,57 @@ unsafe fn run_native(
   UI = &raw mut *&mut ui_stack;
   // set update_func
   UPDATE_FUNC = &raw const *&update_fun.unbind();
+  // parse kwargs
+  let mut viewport = egui::viewport::ViewportBuilder::default();
+
+  if let Some(kwargs) = kwargs {
+
+    if let (Some(height), Some(width)) = (kwargs.get_item("inner_height")?, kwargs.get_item("inner_width")?) {
+      viewport = viewport.with_inner_size([
+        height.downcast::<PyInt>()?.extract()?, 
+        width.downcast::<PyInt>()?.extract()?
+      ]); 
+    }
+
+    if let (Some(height), Some(width)) = (kwargs.get_item("min_inner_height")?, kwargs.get_item("min_inner_width")?) {
+      viewport = viewport.with_min_inner_size([
+        height.downcast::<PyInt>()?.extract()?, 
+        width.downcast::<PyInt>()?.extract()?
+      ]); 
+    }
+
+    if let (Some(height), Some(width)) = (kwargs.get_item("max_inner_height")?, kwargs.get_item("max_inner_width")?) {
+      viewport = viewport.with_max_inner_size([
+        height.downcast::<PyInt>()?.extract()?, 
+        width.downcast::<PyInt>()?.extract()?
+      ]); 
+    }
+
+    if let Some(fullscreen) = kwargs.get_item("fullscreen")? {
+      viewport = viewport.with_fullscreen(fullscreen.downcast::<PyBool>()?.extract()?);
+    }
+
+    if let Some(maximized) = kwargs.get_item("maximized")? {
+      viewport = viewport.with_maximized(maximized.downcast::<PyBool>()?.extract()?);
+    }
+
+    if let Some(resizable) = kwargs.get_item("resizable")? {
+      viewport = viewport.with_resizable(resizable.downcast::<PyBool>()?.extract()?);
+    }
+
+    if let Some(transparent) = kwargs.get_item("transparent")? {
+      viewport = viewport.with_transparent(transparent.downcast::<PyBool>()?.extract()?);
+    }
+  }
+
+  let options = eframe::NativeOptions {
+    viewport,
+    ..eframe::NativeOptions::default()
+  };
   // create a window
   let result = eframe::run_native(
         app_name,
-        eframe::NativeOptions::default(),
+        options,
         Box::new(|cc| {
             // This gives us image support:
             egui_extras::install_image_loaders(&cc.egui_ctx);
