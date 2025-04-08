@@ -280,22 +280,22 @@ unsafe fn run_native(
 
     if let (Some(height), Some(width)) = (kwargs.get_item("inner_height")?, kwargs.get_item("inner_width")?) {
       viewport = viewport.with_inner_size([
-        height.downcast::<PyInt>()?.extract()?, 
-        width.downcast::<PyInt>()?.extract()?
+        width.downcast::<PyInt>()?.extract()?,
+        height.downcast::<PyInt>()?.extract()? 
       ]); 
     }
 
     if let (Some(height), Some(width)) = (kwargs.get_item("min_inner_height")?, kwargs.get_item("min_inner_width")?) {
       viewport = viewport.with_min_inner_size([
-        height.downcast::<PyInt>()?.extract()?, 
-        width.downcast::<PyInt>()?.extract()?
+        width.downcast::<PyInt>()?.extract()?,
+        height.downcast::<PyInt>()?.extract()? 
       ]); 
     }
 
     if let (Some(height), Some(width)) = (kwargs.get_item("max_inner_height")?, kwargs.get_item("max_inner_width")?) {
       viewport = viewport.with_max_inner_size([
-        height.downcast::<PyInt>()?.extract()?, 
-        width.downcast::<PyInt>()?.extract()?
+        width.downcast::<PyInt>()?.extract()?,
+        height.downcast::<PyInt>()?.extract()? 
       ]); 
     }
 
@@ -869,12 +869,26 @@ unsafe fn color_edit_button_rgb(rgb: &mut RGB) -> PyResult<()> {
 /// Example:
 ///
 /// image("https://picsum.photos/480");
-/// image("file://assets/ferris.png");
+/// image("file://assets/ferris.png", max_height = 50, max_width = 50);
 #[pyfunction]
-unsafe fn image(source: &str) -> PyResult<()> {
+#[pyo3(signature = (source, **kwargs))]
+unsafe fn image(
+  source: &str, 
+  kwargs: Option<&Bound<'_, PyDict>>,
+) -> PyResult<()> {
   let ui = current_ui(&UI)?;
   
-  ui.image(source);
+  let mut img = egui::Image::new(source);
+
+  if let Some(kwargs) = kwargs {
+    if let Some(height) = kwargs.get_item("max_height")? {
+      img = img.max_height(height.downcast::<PyInt>()?.extract()?);
+    }
+    if let Some(width) = kwargs.get_item("max_width")? {
+      img = img.max_width(width.downcast::<PyInt>()?.extract()?);
+    }
+  }
+  ui.add(img);
   Ok(())
 }
 
