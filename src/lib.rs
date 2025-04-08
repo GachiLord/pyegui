@@ -1,11 +1,12 @@
 #![allow(static_mut_refs)]
 
 use pyo3::prelude::*;
-use pyo3::{exceptions::PyRuntimeError, types::{PyFunction, PyFloat, PyDict, PyInt, PyBool}};
+use pyo3::{exceptions::PyRuntimeError, types::{PyFunction, PyDict, PyInt, PyBool}};
 use eframe::{egui, self};
+use eframe::egui::{FontData, FontDefinitions, FontFamily};
 use egui_extras;
-use std::sync::Mutex;
-use std::ptr;
+use std::sync::{Mutex, Arc};
+use std::{ptr, fs};
 use chrono::NaiveDate;
 
 // state
@@ -50,6 +51,41 @@ impl Context {
 
   fn set_system_theme(&self) {
     self.0.set_theme(egui::ThemePreference::System);        
+  }
+
+  /// Tell egui which fonts to use.
+  ///
+  /// The default egui fonts only support latin and cyrillic alphabets, but you can call this to install additional fonts that support e.g. Japanese characters.
+  ///
+  /// The new fonts will become active at the start of the next pass. This will overwrite the existing fonts.
+  ///  
+  /// Example:
+  /// 
+  /// def update_func(ctx):
+  ///   ctx.add_font("NotoSansJP-VariableFont_wght.ttf")
+  ///   heading("天気の子")
+  fn set_font(&self, source: String) -> PyResult<()> {
+    let buf = fs::read(&source).map_err(|e| {
+      println!("Cannot open '{}': {}", source, e.to_string());
+      e
+    })?;
+    
+    let mut fonts = FontDefinitions::default();
+		fonts.font_data.insert(source.clone(),
+			 Arc::new(
+					 // .ttf and .otf supported
+					 FontData::from_owned(buf)
+			 )
+		);
+    fonts.families.get_mut(&FontFamily::Monospace).unwrap()
+        .push(source.clone());
+
+    fonts.families.get_mut(&FontFamily::Proportional).unwrap()
+        .insert(0, source);
+
+    self.0.set_fonts(fonts);
+
+    Ok(())
   }
 
   /// Open an URL in a browser.
