@@ -1,7 +1,7 @@
 #![allow(static_mut_refs)]
 
 use pyo3::prelude::*;
-use pyo3::{exceptions::PyRuntimeError, types::{PyFunction, PyDict, PyInt, PyBool}};
+use pyo3::{exceptions::PyRuntimeError, types::{PyFunction, PyDict, PyInt, PyBool, PyString}};
 use eframe::{egui, self};
 use eframe::egui::{FontData, FontDefinitions, FontFamily};
 use egui_extras;
@@ -476,12 +476,26 @@ unsafe fn code_editor(text: &mut Str) -> PyResult<()> {
 /// Example:
 /// text = Str("editable")
 /// # inside update func
-/// text_edit_singleline(text)
+/// text_edit_singleline(text, hint_text="hint me bro")
 #[pyfunction]
-unsafe fn text_edit_singleline(text: &mut Str) -> PyResult<()> {
+#[pyo3(signature = (text, **kwargs))]
+unsafe fn text_edit_singleline(
+  text: &mut Str,
+  kwargs: Option<&Bound<'_, PyDict>>
+) -> PyResult<()> {
   let ui = current_ui(&UI)?;
 
-  ui.text_edit_singleline(&mut text.value);
+  let mut w = egui::TextEdit::singleline(&mut text.value);
+
+  if let Some(kwargs) = kwargs {
+
+    if let Some(hint_text) = kwargs.get_item("hint_text")? {
+      w = w.hint_text(hint_text.downcast::<PyString>()?.extract::<String>()?);
+    }
+
+  }
+
+  ui.add(w);
   Ok(())
 }
 
@@ -490,12 +504,26 @@ unsafe fn text_edit_singleline(text: &mut Str) -> PyResult<()> {
 /// Example:
 /// text = Str("editable")
 /// # inside update func
-/// text_edit_multiline(text)
+/// text_edit_multiline(text, hint_text="hint")
 #[pyfunction]
-unsafe fn text_edit_multiline(text: &mut Str) -> PyResult<()> {
+#[pyo3(signature = (text, **kwargs))]
+unsafe fn text_edit_multiline(
+  text: &mut Str,
+  kwargs: Option<&Bound<'_, PyDict>>
+) -> PyResult<()> {
   let ui = current_ui(&UI)?;
 
-  ui.text_edit_multiline(&mut text.value);
+  let mut w = egui::TextEdit::multiline(&mut text.value);
+
+  if let Some(kwargs) = kwargs {
+
+    if let Some(hint_text) = kwargs.get_item("hint_text")? {
+      w = w.hint_text(hint_text.downcast::<PyString>()?.extract::<String>()?);
+    }
+
+  }
+
+  ui.add(w);
   Ok(())
 }
 
@@ -868,8 +896,8 @@ unsafe fn color_edit_button_rgb(rgb: &mut RGB) -> PyResult<()> {
 ///
 /// Example:
 ///
-/// image("https://picsum.photos/480");
-/// image("file://assets/ferris.png", max_height = 50, max_width = 50);
+/// image("https://picsum.photos/480")
+/// image("file://assets/ferris.png", max_height = 50, max_width = 50)
 #[pyfunction]
 #[pyo3(signature = (source, **kwargs))]
 unsafe fn image(
@@ -908,7 +936,7 @@ unsafe fn image_and_text_clicked(source: &str, text: &str) -> PyResult<bool> {
 /// A visual separator. A horizontal or vertical line on layout.
 ///
 /// Example:
-/// separator();
+/// separator()
 #[pyfunction]
 unsafe fn separator() -> PyResult<()> {
   let ui = current_ui(&UI)?;
@@ -925,7 +953,7 @@ unsafe fn separator() -> PyResult<()> {
 /// Once invisible, there is no way to make the Ui visible again.
 ///
 /// Example:
-/// set_invisible();
+/// set_invisible()
 /// heading("this will not be visible")
 #[pyfunction]
 unsafe fn set_invisible() -> PyResult<()> {
