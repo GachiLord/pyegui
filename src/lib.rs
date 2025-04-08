@@ -66,17 +66,17 @@ impl Context {
   ///   heading("天気の子")
   fn set_font(&self, source: String) -> PyResult<()> {
     let buf = fs::read(&source).map_err(|e| {
-      println!("Cannot open '{}': {}", source, e.to_string());
+      eprintln!("Cannot open '{}': {}", source, e.to_string());
       e
     })?;
     
     let mut fonts = FontDefinitions::default();
-		fonts.font_data.insert(source.clone(),
-			 Arc::new(
-					 // .ttf and .otf supported
-					 FontData::from_owned(buf)
-			 )
-		);
+    fonts.font_data.insert(source.clone(),
+       Arc::new(
+           // .ttf and .otf supported
+           FontData::from_owned(buf)
+       )
+    );
     fonts.families.get_mut(&FontFamily::Monospace).unwrap()
         .push(source.clone());
 
@@ -205,11 +205,11 @@ impl eframe::App for PyeguiApp {
         let ui_stack = UI.as_mut().expect(UI_PTR_NULL_ERR);
         ui_stack.push(&raw mut *ui);
 
-        if let Err(err) = Python::with_gil(|py| {
-          UPDATE_FUNC.as_ref().expect(UPDATE_FUNC_PTR_NULL_ERR).call1(py, (ctx_r,))
-        }) {
-          println!("update_fun threw an error: {}", err.to_string());
-        }
+        Python::with_gil(|py| {
+          if let Err(err) = UPDATE_FUNC.as_ref().expect(UPDATE_FUNC_PTR_NULL_ERR).call1(py, (ctx_r,)) {
+            err.display(py);
+          }
+        });
 
         ui_stack.pop().expect(UI_STACK_ERR);
       });
@@ -360,7 +360,9 @@ unsafe fn run_nested_update_func(ui: &mut egui::Ui, update_fun: Bound<'_, PyFunc
   ui_stack.push(&raw mut *ui);
 
   if let Err(err) = update_fun.call0() {
-    println!("update_fun threw an error: {}", err.to_string());
+    Python::with_gil(|py| {
+      err.display(py);
+    });
   }
 
   match ui_stack.pop() {
@@ -635,7 +637,7 @@ unsafe fn slider_float(value: &mut Float, min: f32, max: f32, text: &str) -> PyR
 /// Example:
 /// data = Int(5) 
 /// # inside update_func 
-/// slider_float(data, 0, 50, "slide me")
+/// slider_int(data, 0, 50, "slide me")
 #[pyfunction]
 unsafe fn slider_int(value: &mut Int, min: i32, max: i32, text: &str) -> PyResult<()> {
   let ui = current_ui(&UI)?;
@@ -666,7 +668,7 @@ unsafe fn drag_float(value: &mut Float, min: f32, max: f32, speed: f32) -> PyRes
 /// # inside update_func 
 /// drag_int(data, 0, 50, 1)
 #[pyfunction]
-unsafe fn drag_int(value: &mut Int, min: i32, max: i32, speed: f32) -> PyResult<()> {
+unsafe fn drag_int(value: &mut Int, min: i32, max: i32, speed: i32) -> PyResult<()> {
   let ui = current_ui(&UI)?;
  
   ui.add(egui::DragValue::new(&mut value.value).speed(speed).range(min..=max));
