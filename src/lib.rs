@@ -570,10 +570,8 @@ unsafe fn horizontal_wrapped(update_fun: Bound<'_, PyFunction>) -> PyResult<()> 
 #[pyfunction]
 unsafe fn collapsing(heading: &str, update_fun: Bound<'_, PyFunction>) -> PyResult<()> {
 
-  current_ui(&UI)?
-    .collapsing(heading, |ui| run_nested_update_func(ui, update_fun))
-    .body_returned
-    .unwrap()
+  current_ui(&UI)?.collapsing(heading, |ui| run_nested_update_func(ui, update_fun));
+  Ok(())
 }
 
 /// Create a child ui which is indented to the right.
