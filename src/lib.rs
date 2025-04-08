@@ -62,7 +62,7 @@ impl Context {
   /// Example:
   /// 
   /// def update_func(ctx):
-  ///   ctx.add_font("NotoSansJP-VariableFont_wght.ttf")
+  ///   ctx.set_font("NotoSansJP-VariableFont_wght.ttf")
   ///   heading("天気の子")
   fn set_font(&self, source: String) -> PyResult<()> {
     let buf = fs::read(&source).map_err(|e| {

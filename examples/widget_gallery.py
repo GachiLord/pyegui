@@ -22,6 +22,8 @@ def update_func(ctx):
 
   text_edit_singleline(text_singline, hint_text="hint text")
   text_edit_multiline(text_multiline, hint_text="hint text")
+  code("print(69)")
+  code_editor(text_multiline)
 
   if button_clicked("clear text"):
     text_singline.value = ""
