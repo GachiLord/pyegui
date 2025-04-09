@@ -1,7 +1,8 @@
 #![allow(static_mut_refs)]
 
+use log::debug;
 use pyo3::prelude::*;
-use pyo3::{exceptions::PyRuntimeError, types::{PyFunction, PyDict, PyInt, PyBool, PyString}};
+use pyo3::{exceptions::PyRuntimeError, types::{PyAny, PyDict, PyInt, PyBool, PyString}};
 use eframe::{egui, self};
 use eframe::egui::{FontData, FontDefinitions, FontFamily};
 use egui_extras;
@@ -13,12 +14,10 @@ use chrono::NaiveDate;
 
 static mut UI: *mut Vec<*mut egui::Ui> = ptr::null_mut();
 static mut APP_MUTEX: Mutex<()> = Mutex::new(());
-static mut UPDATE_FUNC: *const Py<PyFunction> = ptr::null();
 
 // messages
 
 static APP_MUTEX_ERR: &'static str = "run_simple_native has been called on a separate thread";
-static UPDATE_FUNC_PTR_NULL_ERR: &'static str = "UPDATE_FUNC ptr is null. This is likely to be a problem with pyegui";
 static UI_PTR_NULL_ERR: &'static str = "UI ptr is null. This is likely to be a problem with pyegui";
 static UI_STACK_ERR: &'static str = "UI stack is empty. This is likely to be a problem with pyegui";
 static UI_CALL_OUTSIDE_UPDATE_FUNC: &'static str = "UI functions should be called only within update_fun and on the same thread. update_fun should only be called by run_simple_native";
@@ -190,10 +189,11 @@ impl Date {
 
 // Start function
 
-#[derive(Default)]
-struct PyeguiApp;
+struct PyeguiApp<'py> {
+  update_func: Bound<'py, PyAny>
+}
 
-impl eframe::App for PyeguiApp {
+impl eframe::App for PyeguiApp<'_> {
   fn update(&mut self, ctx: &egui::Context, _frame: &mut eframe::Frame) {
 
     let ctx_r = Context(ctx.clone());
@@ -202,16 +202,25 @@ impl eframe::App for PyeguiApp {
 
       egui::CentralPanel::default().show(ctx, |ui| {
 
+				debug!("Getting ui stack pointer");
         let ui_stack = UI.as_mut().expect(UI_PTR_NULL_ERR);
+
+				debug!("Push UI");
         ui_stack.push(&raw mut *ui);
 
+				debug!("Execute update_func");
+
         Python::with_gil(|py| {
-          if let Err(err) = UPDATE_FUNC.as_ref().expect(UPDATE_FUNC_PTR_NULL_ERR).call1(py, (ctx_r,)) {
+          if let Err(err) = self.update_func.call1((ctx_r,)) {
             err.display(py);
           }
         });
 
+				debug!("Executed update_func");
+
         ui_stack.pop().expect(UI_STACK_ERR);
+
+				debug!("Pop UI");
       });
 
     }
@@ -260,19 +269,19 @@ impl eframe::App for PyeguiApp {
 ///
 /// run_native("My app", update_func)
 #[pyfunction]
-#[pyo3(signature = (app_name, update_fun, **kwargs))]
+#[pyo3(signature = (app_name, update_func, **kwargs))]
 unsafe fn run_native(
     app_name: &str,
-    update_fun: Bound<'_, PyFunction>,
+    update_func: Bound<'_, PyAny>,
     kwargs: Option<&Bound<'_, PyDict>>,
 ) -> PyResult<()> {
+	debug!("Trying to get the app lock");
   // ensure thread safety 
   let _lock = APP_MUTEX.try_lock().map_err(|_| PyRuntimeError::new_err(APP_MUTEX_ERR))?;
   // init UI stack
+	debug!("Initialzing UI stack");
   let mut ui_stack = Vec::with_capacity(32);
   UI = &raw mut *&mut ui_stack;
-  // set update_func
-  UPDATE_FUNC = &raw const *&update_fun.unbind();
   // parse kwargs
   let mut viewport = egui::viewport::ViewportBuilder::default();
 
@@ -320,6 +329,7 @@ unsafe fn run_native(
     viewport,
     ..eframe::NativeOptions::default()
   };
+	debug!("Creating a window");
   // create a window
   let result = eframe::run_native(
         app_name,
@@ -328,7 +338,7 @@ unsafe fn run_native(
             // This gives us image support:
             egui_extras::install_image_loaders(&cc.egui_ctx);
 
-            Ok(Box::<PyeguiApp>::default())
+            Ok(Box::new(PyeguiApp { update_func: update_func }))
         }),
   );
 
@@ -354,7 +364,7 @@ unsafe fn current_ui(ui: &*mut Vec<*mut egui::Ui>) -> PyResult<&mut egui::Ui> {
   last_ui(ui_stack(ui)?)  
 }
 
-unsafe fn run_nested_update_func(ui: &mut egui::Ui, update_fun: Bound<'_, PyFunction>) -> PyResult<()> {
+unsafe fn run_nested_update_func(ui: &mut egui::Ui, update_fun: Bound<'_, PyAny>) -> PyResult<()> {
   let ui_stack = ui_stack(&UI).unwrap_unchecked();
 
   ui_stack.push(&raw mut *ui);
@@ -561,20 +571,20 @@ unsafe fn small_button_clicked(text: &str) -> PyResult<bool> {
 /// 
 /// horizontal(horizontal_update_func)
 #[pyfunction]
-unsafe fn horizontal(update_fun: Bound<'_, PyFunction>) -> PyResult<()> {
+unsafe fn horizontal(update_fun: Bound<'_, PyAny>) -> PyResult<()> {
 
   current_ui(&UI)?.horizontal(|ui| run_nested_update_func(ui, update_fun)).inner
 }
 
 /// Like horizontal, but allocates the full vertical height and then centers elements vertically.
 #[pyfunction]
-unsafe fn horizontal_centered(update_fun: Bound<'_, PyFunction>) -> PyResult<()> {
+unsafe fn horizontal_centered(update_fun: Bound<'_, PyAny>) -> PyResult<()> {
 
   current_ui(&UI)?.horizontal_centered(|ui| run_nested_update_func(ui, update_fun)).inner
 }
 /// Like horizontal, but aligns content with top.
 #[pyfunction]
-unsafe fn horizontal_top(update_fun: Bound<'_, PyFunction>) -> PyResult<()> {
+unsafe fn horizontal_top(update_fun: Bound<'_, PyAny>) -> PyResult<()> {
 
   current_ui(&UI)?.horizontal_top(|ui| run_nested_update_func(ui, update_fun)).inner
 }
@@ -583,7 +593,7 @@ unsafe fn horizontal_top(update_fun: Bound<'_, PyFunction>) -> PyResult<()> {
 /// 
 /// Elements will be centered on the Y axis, i.e. adjusted up and down to lie in the center of the horizontal layout. The initial height is style.spacing.interact_size.y. Centering is almost always what you want if you are planning to mix widgets or use different types of text.
 #[pyfunction]
-unsafe fn horizontal_wrapped(update_fun: Bound<'_, PyFunction>) -> PyResult<()> {
+unsafe fn horizontal_wrapped(update_fun: Bound<'_, PyAny>) -> PyResult<()> {
 
   current_ui(&UI)?.horizontal_wrapped(|ui| run_nested_update_func(ui, update_fun)).inner
 }
@@ -596,7 +606,7 @@ unsafe fn horizontal_wrapped(update_fun: Bound<'_, PyFunction>) -> PyResult<()> 
 ///   heading("hi")
 /// collapsing("collapsed", update_func)
 #[pyfunction]
-unsafe fn collapsing(heading: &str, update_fun: Bound<'_, PyFunction>) -> PyResult<()> {
+unsafe fn collapsing(heading: &str, update_fun: Bound<'_, PyAny>) -> PyResult<()> {
 
   current_ui(&UI)?.collapsing(heading, |ui| run_nested_update_func(ui, update_fun));
   Ok(())
@@ -608,7 +618,7 @@ unsafe fn collapsing(heading: &str, update_fun: Bound<'_, PyFunction>) -> PyResu
 ///   heading("I'm indented")
 /// indent(update_func)
 #[pyfunction]
-unsafe fn indent(update_fun: Bound<'_, PyFunction>) -> PyResult<()> {
+unsafe fn indent(update_fun: Bound<'_, PyAny>) -> PyResult<()> {
 
   current_ui(&UI)?.indent("your mom", |ui| run_nested_update_func(ui, update_fun)).inner
 }
@@ -622,7 +632,7 @@ unsafe fn indent(update_fun: Bound<'_, PyFunction>) -> PyResult<()> {
 /// 
 /// group(update_func)
 #[pyfunction]
-unsafe fn group(update_fun: Bound<'_, PyFunction>) -> PyResult<()> {
+unsafe fn group(update_fun: Bound<'_, PyAny>) -> PyResult<()> {
 
   current_ui(&UI)?.group(|ui| run_nested_update_func(ui, update_fun)).inner
 }
@@ -639,7 +649,7 @@ unsafe fn group(update_fun: Bound<'_, PyFunction>) -> PyResult<()> {
 /// heading("normal opacity")
 /// scope(update_func)
 #[pyfunction]
-unsafe fn scope(update_fun: Bound<'_, PyFunction>) -> PyResult<()> {
+unsafe fn scope(update_fun: Bound<'_, PyAny>) -> PyResult<()> {
 
   current_ui(&UI)?.scope(|ui| run_nested_update_func(ui, update_fun)).inner
 }
@@ -990,7 +1000,7 @@ unsafe fn disable() -> PyResult<()> {
 /// add_enabled(False, lambda: button_clicked("you can't click me"))
 /// button_clicked("but you can click me")
 #[pyfunction]
-unsafe fn add_enabled(enabled: bool, update_fun: Bound<'_, PyFunction>) -> PyResult<()> {
+unsafe fn add_enabled(enabled: bool, update_fun: Bound<'_, PyAny>) -> PyResult<()> {
 
   current_ui(&UI)?.add_enabled_ui(enabled, |ui| run_nested_update_func(ui, update_fun)).inner
 }
@@ -1042,6 +1052,7 @@ unsafe fn add_space(amount: f32) -> PyResult<()> {
 /// A Python module implemented in Rust.
 #[pymodule]
 fn pyegui(m: &Bound<'_, PyModule>) -> PyResult<()> {
+	pyo3_log::init();
   // classes
   m.add_class::<Str>()?;
   m.add_class::<Bool>()?;

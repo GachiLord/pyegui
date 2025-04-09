@@ -9,7 +9,9 @@ name = "pyegui"
 crate-type = ["cdylib"]
 
 [dependencies]
-pyo3 = { version = "0.24.0", features = ["chrono"] }
+pyo3 = { version = "0.24.0", features = ["chrono", "abi3-py311", "generate-import-lib", "extension-module"] }
 eframe = "0.31.1"
 egui_extras = { version = "0.31.1", features = ["all_loaders", "datepicker"] }
 chrono = "0.4.40"
+log = { version = "0.4.27", features = ["release_max_level_info"] }
+pyo3-log = "0.12.3"

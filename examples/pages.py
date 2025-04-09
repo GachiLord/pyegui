@@ -1,4 +1,5 @@
 from pyegui import *
+import logging
 
 PAGE_1 = 1
 PAGE_2 = 2
