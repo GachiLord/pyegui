@@ -1,5 +1,6 @@
 build:
-	docker run --rm -v $(PWD):/io ghcr.io/pyo3/maturin build --release
+	rm -rf target/wheels/*
+	docker run --rm -v $(PWD):/io ghcr.io/pyo3/maturin build --release --sdist
 	.venv/bin/maturin build --release --target x86_64-pc-windows-gnu
 
 upload:
