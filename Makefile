@@ -2,12 +2,17 @@ build:
 	rm -rf target/wheels/*
 	docker run --rm -v $(PWD):/io ghcr.io/pyo3/maturin build --release --sdist
 	.venv/bin/maturin build --release --target x86_64-pc-windows-gnu
+build-manylinux:
+	docker run --entrypoint cargo --rm -v $(PWD):/io ghcr.io/pyo3/maturin build --release 
 
 upload:
 	.venv/bin/maturin upload target/wheels/*
 
 upload-test:
 	python3 -m twine upload --repository testpypi target/wheels/*
+
+python:
+	.venv/bin/python
 
 debug:
 	.venv/bin/python debug.py

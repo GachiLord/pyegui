@@ -2,7 +2,7 @@
 
 use log::debug;
 use pyo3::prelude::*;
-use pyo3::{exceptions::PyRuntimeError, types::{PyAny, PyDict, PyInt, PyBool, PyString}};
+use pyo3::{exceptions::{PyRuntimeError, PyOSError}, types::{PyAny, PyDict, PyInt, PyBool, PyString}};
 use eframe::{egui, self};
 use eframe::egui::{FontData, FontDefinitions, FontFamily};
 use egui_extras;
@@ -256,6 +256,8 @@ impl eframe::App for PyeguiApp<'_> {
 ///   whether our app is resizable
 /// transparent: bool
 ///   whether our app is transparent
+/// icon_path:
+///   path to icon in rgba format
 ///
 /// Example:
 /// name = Str("")
@@ -322,6 +324,15 @@ unsafe fn run_native(
 
     if let Some(transparent) = kwargs.get_item("transparent")? {
       viewport = viewport.with_transparent(transparent.downcast::<PyBool>()?.extract()?);
+    }
+
+    if let Some(icon_path) = kwargs.get_item("icon_path")? {
+      let path = icon_path.downcast::<PyString>()?.extract::<String>()?;
+			let buf = fs::read(path)?;
+
+			let icon_data = eframe::icon_data::from_png_bytes(&buf)
+				.map_err(|e| PyOSError::new_err(format!("Failed to decode png file: {}", e)))?;
+      viewport = viewport.with_icon(icon_data);
     }
   }
 
@@ -1098,7 +1109,7 @@ fn pyegui(m: &Bound<'_, PyModule>) -> PyResult<()> {
   m.add_function(wrap_pyfunction!(progress, m)?)?;
   m.add_function(wrap_pyfunction!(spinner, m)?)?;
   m.add_function(wrap_pyfunction!(color_edit_button_rgb, m)?)?;
-  m.add_function(wrap_pyfunction!(image, m)?)?;
+  m.add_function(wrap_pyfunction!(crate::image, m)?)?;
   m.add_function(wrap_pyfunction!(image_and_text_clicked, m)?)?;
   m.add_function(wrap_pyfunction!(separator, m)?)?;
   m.add_function(wrap_pyfunction!(set_invisible, m)?)?;
