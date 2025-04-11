@@ -6,7 +6,7 @@ build-manylinux:
 	docker run --entrypoint cargo --rm -v $(PWD):/io ghcr.io/pyo3/maturin build --release 
 
 upload:
-	.venv/bin/maturin upload target/wheels/*
+	python3 -m twine upload upload target/wheels/*
 
 upload-test:
 	python3 -m twine upload --repository testpypi target/wheels/*
