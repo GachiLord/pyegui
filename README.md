@@ -31,13 +31,13 @@ run_native("My pyegui Application", update_func)
 **pyegui** tries to be as close as possible to the original egui API, but with the focus on simplicity and usability. 
 Callbacks were removed where possible to accomplish more smooth expirience in Python.
 
-- Light and Dark themes(defaults to system's)
+- Light and Dark themes(defaults to the system's)
 - Built-in latin and cyrillic alphabets. You can load any font you want with `ctx.set_font` function
 - Images(png and jpeg)
 - Date picker
 - RBG color picker
 - Text fields, radio buttons, buttons, code, progress bar etc.
-- No dependencies like qt and gtk which destroy you project when you distribute it. Just pure giant Rust binary
+- No dependencies which destroy you project when you distribute it. Just pure giant Rust binary
 
 Full list of implemented features is available [here](TODO.md)
 
@@ -96,7 +96,7 @@ Update functions may be nested. Such functions create a new UI scope that can ha
 def update_func(ctx):
   # define update_func
   def nested():
-    label("I'm a label inside nested update_func")
+    label("I'm a label inside nested update function")
     label("New label")
     disable() # this function will disable all further widgets in the scope
     if button_clicked("You can't click me"):
