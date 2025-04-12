@@ -4,8 +4,18 @@ build-backend = "maturin"
 
 [project]
 name = "pyegui"
+description= "Immediate mode GUI library"
+readme = "README.md"
+authors = [
+  { name = "GachiLord" },
+]
+license = "MIT"
+license-files = ["LICEN[CS]E*"]
 requires-python = ">=3.11"
+keywords = ["egui", "GUI", "imgui"]
 classifiers = [
+		"Operating System :: OS Independent",
+		"License :: OSI Approved :: MIT License",
     "Programming Language :: Rust",
     "Programming Language :: Python :: Implementation :: CPython",
     "Programming Language :: Python :: Implementation :: PyPy",
@@ -13,3 +23,8 @@ classifiers = [
 dynamic = ["version"]
 [tool.maturin]
 features = ["pyo3/extension-module"]
+
+[project.urls]
+Homepage = "https://github.com/GachiLord/pyegui"
+Issues = "https://github.com/GachiLord/pyegui/issues"
+
