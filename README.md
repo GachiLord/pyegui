@@ -23,8 +23,8 @@ def update_func(ctx):
 
 run_native("My pyegui Application", update_func)
 ```
-![example 1](example1.jpeg "Dark theme")
-![example 2](example2.jpeg  "White theme")
+![example 1](https://github.com/GachiLord/pyegui/raw/main/example1.jpeg "Dark theme")
+![example 2](https://github.com/GachiLord/pyegui/raw/main/example2.jpeg  "White theme")
 
 ## Features
 
@@ -39,7 +39,7 @@ Callbacks were removed where possible to accomplish more smooth expirience in Py
 - Text fields, radio buttons, buttons, code, progress bar etc.
 - No dependencies which destroy you project when you distribute it. Just pure giant Rust binary
 
-Full list of implemented features is available [here](TODO.md)
+Full list of implemented features is available [here](https://github.com/GachiLord/pyegui/blob/main/TODO.md)
 
 ## Install
 
@@ -70,7 +70,7 @@ def update_func(ctx):
 run_native("Example app", update_func)
 ```
 
-You can find more examples in this [folder](examples). Also Python's `help(pyegui.some_function)` will be quite effective(there are examples for every function).
+You can find more examples in this [folder](https://github.com/GachiLord/pyegui/tree/main/examples). Also Python's `help(pyegui.some_function)` will be quite effective(there are examples for every function).
 Read the source code of this binding and the original [library](https://github.com/emilk/egui).
 
 ### Update functions
