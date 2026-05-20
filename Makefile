@@ -17,10 +17,16 @@ python:
 debug:
 	.venv/bin/python debug.py
 
+doc:
+	.venv/bin/maturin develop
+	rm ./docs/_build/ -rf
+	.venv/bin/sphinx-build -v ./docs/ ./docs/_build/
+
 develop:
 	.venv/bin/maturin develop
 
 venv:
 	python3 -m venv .venv
 	.venv/bin/pip install maturin
+	.venv/bin/pip install sphinx
 

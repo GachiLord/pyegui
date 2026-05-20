@@ -31,77 +31,77 @@ struct Context(egui::Context);
 impl Context {
 
   #[getter]
-  fn is_light_theme(&self) -> bool {
-    self.0.theme() == egui::Theme::Light    
-  }
+    fn is_light_theme(&self) -> bool {
+        self.0.theme() == egui::Theme::Light    
+    }
 
-  #[getter]
-  fn is_dark_theme(&self) -> bool {
-    self.0.theme() == egui::Theme::Dark
-  }
+    #[getter]
+    fn is_dark_theme(&self) -> bool {
+        self.0.theme() == egui::Theme::Dark
+    }
 
-  fn set_light_theme(&self) {
-    self.0.set_theme(egui::ThemePreference::Light);        
-  }
+    fn set_light_theme(&self) {
+        self.0.set_theme(egui::ThemePreference::Light);        
+    }
 
-  fn set_dark_theme(&self) {
-    self.0.set_theme(egui::ThemePreference::Dark);        
-  }
+    fn set_dark_theme(&self) {
+        self.0.set_theme(egui::ThemePreference::Dark);        
+    }
 
-  fn set_system_theme(&self) {
-    self.0.set_theme(egui::ThemePreference::System);        
-  }
+    fn set_system_theme(&self) {
+        self.0.set_theme(egui::ThemePreference::System);        
+    }
 
-  /// Tell egui which fonts to use.
-  ///
-  /// The default egui fonts only support latin and cyrillic alphabets, but you can call this to install additional fonts that support e.g. Japanese characters.
-  ///
-  /// The new fonts will become active at the start of the next pass. This will overwrite the existing fonts.
-  ///  
-  /// Example:
-  /// 
-  /// def update_func(ctx):
-  ///   ctx.set_font("NotoSansJP-VariableFont_wght.ttf")
-  ///   heading("天気の子")
-  fn set_font(&self, source: String) -> PyResult<()> {
-    let buf = fs::read(&source).map_err(|e| {
-      eprintln!("Cannot open '{}': {}", source, e.to_string());
-      e
-    })?;
-    
-    let mut fonts = FontDefinitions::default();
-    fonts.font_data.insert(source.clone(),
-       Arc::new(
-           // .ttf and .otf supported
-           FontData::from_owned(buf)
-       )
-    );
-    fonts.families.get_mut(&FontFamily::Monospace).unwrap()
-        .push(source.clone());
+    /// Tell egui which fonts to use.
+    ///
+    /// The default egui fonts only support latin and cyrillic alphabets, but you can call this to install additional fonts that support e.g. Japanese characters.
+    ///
+    /// The new fonts will become active at the start of the next pass. This will overwrite the existing fonts.
+    ///  
+    /// Example::
+    /// 
+    ///   def update_func(ctx):
+    ///     ctx.set_font("NotoSansJP-VariableFont_wght.ttf")
+    ///     heading("天気の子")
+    fn set_font(&self, source: String) -> PyResult<()> {
+      let buf = fs::read(&source).map_err(|e| {
+        eprintln!("Cannot open '{}': {}", source, e.to_string());
+        e
+      })?;
+      
+      let mut fonts = FontDefinitions::default();
+      fonts.font_data.insert(source.clone(),
+         Arc::new(
+             // .ttf and .otf supported
+             FontData::from_owned(buf)
+         )
+      );
+      fonts.families.get_mut(&FontFamily::Monospace).unwrap()
+          .push(source.clone());
 
-    fonts.families.get_mut(&FontFamily::Proportional).unwrap()
-        .insert(0, source);
+      fonts.families.get_mut(&FontFamily::Proportional).unwrap()
+          .insert(0, source);
 
-    self.0.set_fonts(fonts);
+      self.0.set_fonts(fonts);
 
-    Ok(())
-  }
+      Ok(())
+    }
 
-  /// Open an URL in a browser.
-  fn open_url(&self, url: &str) {
-    self.0.open_url(egui::OpenUrl::new_tab(url));
-  }
+    /// Open an URL in a browser.
+    fn open_url(&self, url: &str) {
+        self.0.open_url(egui::OpenUrl::new_tab(url));
+    }
 
-  /// Copy the given text to the system clipboard.
-  fn copy_text(&self, text: String) {
-    self.0.copy_text(text);
-  }
+    /// Copy the given text to the system clipboard.
+    fn copy_text(&self, text: String) {
+        self.0.copy_text(text);
+    }
 }
 
 #[pyclass]
 struct Str {
-  #[pyo3(get, set)]
-  value: String
+    #[pyo3(get, set)]
+    value: String
 }
 
 #[pymethods]
@@ -114,8 +114,8 @@ impl Str {
 
 #[pyclass]
 struct Bool {
-  #[pyo3(get, set)]
-  value: bool
+    #[pyo3(get, set)]
+    value: bool
 }
 
 #[pymethods]
@@ -128,8 +128,8 @@ impl Bool {
 
 #[pyclass]
 struct Int {
-  #[pyo3(get, set)]
-  value: i32
+    #[pyo3(get, set)]
+    value: i32
 }
 
 #[pymethods]
@@ -142,8 +142,8 @@ impl Int {
 
 #[pyclass]
 struct Float {
-  #[pyo3(get, set)]
-  value: f32
+    #[pyo3(get, set)]
+    value: f32
 }
 
 #[pymethods]
@@ -175,8 +175,8 @@ impl RGB {
 
 #[pyclass]
 struct Date {
-  #[pyo3(get, set)]
-  value: NaiveDate
+    #[pyo3(get, set)]
+    value: NaiveDate
 }
 
 #[pymethods]
@@ -190,7 +190,7 @@ impl Date {
 // Start function
 
 struct PyeguiApp<'py> {
-  update_func: Bound<'py, PyAny>
+    update_func: Bound<'py, PyAny>
 }
 
 impl eframe::App for PyeguiApp<'_> {
@@ -227,49 +227,50 @@ impl eframe::App for PyeguiApp<'_> {
   }
 }
 
+
 /// Creates a window and runs update_func.
 /// This is an entrypoint for your GUI application.
 /// 
-/// Parameters:
-/// app_name: str
-///   name displayed at the header bar
-/// update_func: Callable[[Context], None]
-///   your function that draws UI
-/// Kwargs:
-/// inner_height: float
-///   the desired height of the window
-/// inner_width: float
-///   the desired width of the window
-/// min_inner_height: float
-///   min height of the window
-/// min_inner_width: float
-///   min width of the window
-/// max_inner_height: float
-///   max height of the window
-/// max_inner_width: float
-///   max width of the window
-/// fullscreen: bool
-///   whether to open app in fullscreen
-/// maximized: bool
-///   whether to open app maximized
-/// resizable: bool
-///   whether our app is resizable
-/// transparent: bool
-///   whether our app is transparent
-/// icon_path:
-///   path to icon in rgba format
+/// Args:
+///     app_name (str): name displayed at the header bar
 ///
-/// Example:
-/// name = Str("")
+///     update_func (Callable[[Context], None]): your function that draws UI
 ///
-/// def update_func(ctx):
-///   heading(f"Hello, {name.value}!")
-///   text_edit_singleline(name)
+///     inner_height (float): the desired height of the window
+///
+///     inner_width (float): the desired width of the window
+///
+///     min_inner_height (float): min height of the window
+///
+///     min_inner_width (float): min width of the window
+///
+///     max_inner_height (float): max height of the window
+///
+///     max_inner_width (float): max width of the window
+///
+///     fullscreen (bool): whether to open app in fullscreen
+///
+///     maximized (bool): whether to open app maximized
+///
+///     resizable (bool): whether our app is resizable
+///
+///     transparent (bool): whether our app is transparent
+///
+///     icon_path (str): path to icon in rgba format
 /// 
-///   if button_clicked("click me"):
-///     print("clicked")
+/// Examples::
 ///
-/// run_native("My app", update_func)
+///     name = Str("")
+///     
+///     def update_func(ctx):
+///         heading(f"Hello, {name.value}!")
+///         text_edit_singleline(name)
+///         
+///         if button_clicked("click me"):
+///             print("clicked")
+///     
+///     run_native("My app", update_func)
+///
 #[pyfunction]
 #[pyo3(signature = (app_name, update_func, **kwargs))]
 unsafe fn run_native(
@@ -396,8 +397,9 @@ unsafe fn run_nested_update_func(ui: &mut egui::Ui, update_fun: Bound<'_, PyAny>
 
 /// Show large text
 ///
-/// Example:
-/// heading("hello") 
+/// Example::
+///
+///     heading("hello") 
 #[pyfunction]
 unsafe fn heading(text: &str) -> PyResult<()> {
   let ui = current_ui(&UI)?;
@@ -408,8 +410,9 @@ unsafe fn heading(text: &str) -> PyResult<()> {
 
 /// Show monospace (fixed width) text.
 ///
-/// Example:
-/// monospace("hello") 
+/// Example::
+///
+///     monospace("hello") 
 #[pyfunction]
 unsafe fn monospace(text: &str) -> PyResult<()>  {
   let ui = current_ui(&UI)?;
@@ -420,8 +423,9 @@ unsafe fn monospace(text: &str) -> PyResult<()>  {
 
 /// Show small text.
 ///
-/// Example:
-/// small("hello") 
+/// Example::
+///
+///     small("hello") 
 #[pyfunction]
 unsafe fn small(text: &str) -> PyResult<()> {
   let ui = current_ui(&UI)?;
@@ -432,8 +436,9 @@ unsafe fn small(text: &str) -> PyResult<()> {
 
 /// Show text that stand out a bit (e.g. slightly brighter).
 ///
-/// Example:
-/// strong("hello") 
+/// Example::
+///
+///     strong("hello") 
 #[pyfunction]
 unsafe fn strong(text: &str) -> PyResult<()> {
   let ui = current_ui(&UI)?;
@@ -444,8 +449,9 @@ unsafe fn strong(text: &str) -> PyResult<()> {
 
 /// Show text that is weaker (fainter color).
 ///
-/// Example:
-/// weak("hello") 
+/// Example::
+///
+///     weak("hello") 
 #[pyfunction]
 unsafe fn weak(text: &str) -> PyResult<()> {
   let ui = current_ui(&UI)?;
@@ -456,8 +462,9 @@ unsafe fn weak(text: &str) -> PyResult<()> {
 
 /// Show some text.
 ///
-/// Example:
-/// label("some text") 
+/// Example::
+/// 
+///     label("some text") 
 #[pyfunction]
 unsafe fn label(text: &str) -> PyResult<()> {
   let ui = current_ui(&UI)?;
@@ -468,8 +475,9 @@ unsafe fn label(text: &str) -> PyResult<()> {
 
 /// Show text as monospace with a gray background.
 ///
-/// Example:
-/// code("print(42 + 27)") 
+/// Example::
+///
+///     code("print(42 + 27)") 
 #[pyfunction]
 unsafe fn code(text: &str) -> PyResult<()> {
   let ui = current_ui(&UI)?;
@@ -480,10 +488,11 @@ unsafe fn code(text: &str) -> PyResult<()> {
 
 /// Show singleline text field and update the text
 ///
-/// Example:
-/// text = Str("print(42 + 27)")
-/// # inside update func
-/// code_editor(text)
+/// Example::
+///
+///     text = Str("print(42 + 27)")
+///     # inside update func
+///     code_editor(text)
 #[pyfunction]
 unsafe fn code_editor(text: &mut Str) -> PyResult<()> {
   let ui = current_ui(&UI)?;
@@ -494,10 +503,11 @@ unsafe fn code_editor(text: &mut Str) -> PyResult<()> {
 
 /// Show singleline text field and update the text
 ///
-/// Example:
-/// text = Str("editable")
-/// # inside update func
-/// text_edit_singleline(text, hint_text="hint me bro")
+/// Example::
+///
+///     text = Str("editable")
+///     # inside update func
+///     text_edit_singleline(text, hint_text="hint me bro")
 #[pyfunction]
 #[pyo3(signature = (text, **kwargs))]
 unsafe fn text_edit_singleline(
@@ -522,10 +532,11 @@ unsafe fn text_edit_singleline(
 
 /// Show multiline text field and update the text
 /// 
-/// Example:
-/// text = Str("editable")
-/// # inside update func
-/// text_edit_multiline(text, hint_text="hint")
+/// Example::
+///
+///     text = Str("editable")
+///     # inside update func
+///     text_edit_multiline(text, hint_text="hint")
 #[pyfunction]
 #[pyo3(signature = (text, **kwargs))]
 unsafe fn text_edit_multiline(
@@ -576,11 +587,12 @@ unsafe fn small_button_clicked(text: &str) -> PyResult<bool> {
 /// 
 /// If you don’t want the contents to be centered, use horizontal_top instead.
 /// 
-/// Example:
-/// def horizontal_update_func():
-///   heading("I'm horizontal")
-/// 
-/// horizontal(horizontal_update_func)
+/// Example::
+///
+///     def horizontal_update_func():
+///       heading("I'm horizontal")
+///     
+///     horizontal(horizontal_update_func)
 #[pyfunction]
 unsafe fn horizontal(update_fun: Bound<'_, PyAny>) -> PyResult<()> {
 
@@ -612,10 +624,11 @@ unsafe fn horizontal_wrapped(update_fun: Bound<'_, PyAny>) -> PyResult<()> {
 
 /// A CollapsingHeader that starts out collapsed.
 ///
-/// Example:
-/// def update_func():
-///   heading("hi")
-/// collapsing("collapsed", update_func)
+/// Example::
+///
+///     def update_func():
+///       heading("hi")
+///     collapsing("collapsed", update_func)
 #[pyfunction]
 unsafe fn collapsing(heading: &str, update_fun: Bound<'_, PyAny>) -> PyResult<()> {
 
@@ -624,10 +637,11 @@ unsafe fn collapsing(heading: &str, update_fun: Bound<'_, PyAny>) -> PyResult<()
 }
 
 /// Create a child ui which is indented to the right.
-/// Example:
-/// def update_func():
-///   heading("I'm indented")
-/// indent(update_func)
+/// Example::
+///
+///     def update_func():
+///       heading("I'm indented")
+///     indent(update_func)
 #[pyfunction]
 unsafe fn indent(update_fun: Bound<'_, PyAny>) -> PyResult<()> {
 
@@ -636,12 +650,13 @@ unsafe fn indent(update_fun: Bound<'_, PyAny>) -> PyResult<()> {
 
 /// Visually groups the contents together.
 ///
-/// Example
-/// def update_func():
-///   heading("hi")
-///   heading("there")
-/// 
-/// group(update_func)
+/// Example::
+///
+///     def update_func():
+///       heading("hi")
+///       heading("there")
+///     
+///     group(update_func)
 #[pyfunction]
 unsafe fn group(update_fun: Bound<'_, PyAny>) -> PyResult<()> {
 
@@ -652,13 +667,14 @@ unsafe fn group(update_fun: Bound<'_, PyAny>) -> PyResult<()> {
 /// 
 /// You can use this to temporarily change the Style of a sub-region.
 ///
-/// Example
-/// def update_func():
-///   heading("0.5 opacity")
-///   set_opacity(0.5)
-/// 
-/// heading("normal opacity")
-/// scope(update_func)
+/// Example::
+///
+///     def update_func():
+///       heading("0.5 opacity")
+///       set_opacity(0.5)
+///     
+///     heading("normal opacity")
+///     scope(update_func)
 #[pyfunction]
 unsafe fn scope(update_fun: Bound<'_, PyAny>) -> PyResult<()> {
 
@@ -667,10 +683,11 @@ unsafe fn scope(update_fun: Bound<'_, PyAny>) -> PyResult<()> {
 
 /// Control float with a slider.
 ///
-/// Example:
-/// data = Float(5) 
-/// # inside update_func 
-/// slider_float(data, 0, 50, "slide me")
+/// Example::
+///
+///     data = Float(5) 
+///     # inside update_func 
+///     slider_float(data, 0, 50, "slide me")
 #[pyfunction]
 unsafe fn slider_float(value: &mut Float, min: f32, max: f32, text: &str) -> PyResult<()> {
   let ui = current_ui(&UI)?;
@@ -681,10 +698,11 @@ unsafe fn slider_float(value: &mut Float, min: f32, max: f32, text: &str) -> PyR
 
 /// Control int with a slider.
 /// 
-/// Example:
-/// data = Int(5) 
-/// # inside update_func 
-/// slider_int(data, 0, 50, "slide me")
+/// Example::
+///
+///     data = Int(5) 
+///     # inside update_func 
+///     slider_int(data, 0, 50, "slide me")
 #[pyfunction]
 unsafe fn slider_int(value: &mut Int, min: i32, max: i32, text: &str) -> PyResult<()> {
   let ui = current_ui(&UI)?;
@@ -696,10 +714,11 @@ unsafe fn slider_int(value: &mut Int, min: i32, max: i32, text: &str) -> PyResul
 
 /// Control float by dragging the number.
 ///
-/// Example:
-/// data = Float(5) 
-/// # inside update_func 
-/// drag_float(data, 0, 50, 1.5)
+/// Example::
+///
+///     data = Float(5) 
+///     # inside update_func 
+///     drag_float(data, 0, 50, 1.5)
 #[pyfunction]
 unsafe fn drag_float(value: &mut Float, min: f32, max: f32, speed: f32) -> PyResult<()> {
   let ui = current_ui(&UI)?;
@@ -710,10 +729,11 @@ unsafe fn drag_float(value: &mut Float, min: f32, max: f32, speed: f32) -> PyRes
 
 /// Control int by dragging the number.
 ///
-/// Example:
-/// data = Int(5) 
-/// # inside update_func 
-/// drag_int(data, 0, 50, 1)
+/// Example::
+///
+///     data = Int(5) 
+///     # inside update_func 
+///     drag_int(data, 0, 50, 1)
 #[pyfunction]
 unsafe fn drag_int(value: &mut Int, min: i32, max: i32, speed: i32) -> PyResult<()> {
   let ui = current_ui(&UI)?;
@@ -724,8 +744,9 @@ unsafe fn drag_int(value: &mut Int, min: i32, max: i32, speed: i32) -> PyResult<
 
 /// A clickable hyperlink
 /// 
-/// Example:
-/// hyperlink("https://github.com/emilk/egui")
+/// Example::
+///
+///     hyperlink("https://github.com/emilk/egui")
 #[pyfunction]
 unsafe fn hyperlink(url: &str) -> PyResult<()> {
   let ui = current_ui(&UI)?;
@@ -736,8 +757,9 @@ unsafe fn hyperlink(url: &str) -> PyResult<()> {
 
 /// A clickable hyperlink with label
 /// 
-/// Example:
-/// hyperlink_to("egui on GitHub", "https://www.github.com/emilk/egui/")
+/// Example::
+///
+///     hyperlink_to("egui on GitHub", "https://www.github.com/emilk/egui/")
 #[pyfunction]
 unsafe fn hyperlink_to(label: &str, url: &str) -> PyResult<()> {
   let ui = current_ui(&UI)?;
@@ -750,9 +772,10 @@ unsafe fn hyperlink_to(label: &str, url: &str) -> PyResult<()> {
 /// Clickable text, that looks like a hyperlink.
 /// To link to a web page, use hyperlink or hyperlink_to.
 /// 
-/// Example:
-/// if link_clicked("egui on GitHub"):
-///   print("clicked on a fake link")
+/// Example::
+///
+///     if link_clicked("egui on GitHub"):
+///       print("clicked on a fake link")
 #[pyfunction]
 unsafe fn link_clicked(label: &str) -> PyResult<bool> {
   let ui = current_ui(&UI)?;
@@ -762,10 +785,11 @@ unsafe fn link_clicked(label: &str) -> PyResult<bool> {
 
 /// Show a checkbox.
 /// 
-/// Example:
-/// data = Bool(false)
-/// # inside update_func
-/// checkbox(data, "check me")
+/// Example::
+///
+///     data = Bool(false)
+///     # inside update_func
+///     checkbox(data, "check me")
 #[pyfunction]
 unsafe fn checkbox(checked: &mut Bool, text: &str) -> PyResult<()> {
   let ui = current_ui(&UI)?;
@@ -776,10 +800,11 @@ unsafe fn checkbox(checked: &mut Bool, text: &str) -> PyResult<()> {
 
 /// Acts like a checkbox, but looks like a selectable label.
 /// 
-/// Example:
-/// data = Bool(false)
-/// # inside update_func
-/// toggle_value(data, "check me")
+/// Example::
+///
+///     data = Bool(false)
+///     # inside update_func
+///     toggle_value(data, "check me")
 #[pyfunction]
 unsafe fn toggle_value(selected: &mut Bool, text: &str) -> PyResult<()> {
   let ui = current_ui(&UI)?;
@@ -791,16 +816,17 @@ unsafe fn toggle_value(selected: &mut Bool, text: &str) -> PyResult<()> {
 
 /// Show a radio button. It is selected if current_value == selected_value. If clicked, selected_value is assigned to current_value.
 /// 
-/// Example:
-/// RED = 0
-/// GREEN = 1
-/// BLUE = 2
-/// 
-/// c = Int(RED)
-/// 
-/// radio_value(c, RED, "red")
-/// radio_value(c, GREEN, "green")
-/// radio_value(c, BLUE, "blue")
+/// Example::
+///
+///     RED = 0
+///     GREEN = 1
+///     BLUE = 2
+///     
+///     c = Int(RED)
+///     
+///     radio_value(c, RED, "red")
+///     radio_value(c, GREEN, "green")
+///     radio_value(c, BLUE, "blue")
 #[pyfunction]
 unsafe fn radio_value(current_value: &mut Int, alternative: i32, text: &str) -> PyResult<()> {
   let ui = current_ui(&UI)?;
@@ -812,16 +838,17 @@ unsafe fn radio_value(current_value: &mut Int, alternative: i32, text: &str) -> 
 
 /// Show selectable text. It is selected if current_value == selected_value. If clicked, selected_value is assigned to current_value.
 /// 
-/// Example:
-/// RED = 0
-/// GREEN = 1
-/// BLUE = 2
-/// 
-/// c = Int(RED)
-/// 
-/// selectable_value(c, RED, "red")
-/// selectable_value(c, GREEN, "green")
-/// selectable_value(c, BLUE, "blue")
+/// Example::
+///
+///     RED = 0
+///     GREEN = 1
+///     BLUE = 2
+///     
+///     c = Int(RED)
+///     
+///     selectable_value(c, RED, "red")
+///     selectable_value(c, GREEN, "green")
+///     selectable_value(c, BLUE, "blue")
 #[pyfunction]
 unsafe fn selectable_value(current_value: &mut Int, alternative: i32, text: &str) -> PyResult<()> {
   let ui = current_ui(&UI)?;
@@ -833,15 +860,16 @@ unsafe fn selectable_value(current_value: &mut Int, alternative: i32, text: &str
 /// Shows a combo box with values defined in "alternatives" and their corresponding names
 /// defined in "names"
 /// 
-/// Example:
-/// RED = 0
-/// GREEN = 1
-/// BLUE = 2
+/// Example::
 ///
-/// data = Int(RED)
+///     RED = 0
+///     GREEN = 1
+///     BLUE = 2
 ///
-/// def update_func(a):
-///     combo_box(data, [RED, GREEN, BLUE], ["red", "green", "blue"], "choose your fate")
+///     data = Int(RED)
+///
+///     def update_func(a):
+///         combo_box(data, [RED, GREEN, BLUE], ["red", "green", "blue"], "choose your fate")
 #[pyfunction]
 unsafe fn combo_box(current_value: &mut Int, alternatives: Vec<i32>, names: Vec<String>, label: &str) -> PyResult<()> {
   let ui = current_ui(&UI)?;
@@ -864,9 +892,9 @@ unsafe fn combo_box(current_value: &mut Int, alternatives: Vec<i32>, names: Vec<
 /// A simple progress bar.
 /// value in the [0, 1] range, where 1 means “completed”.
 ///
-/// Example:
+/// Example::
 ///
-/// progress(0.5)
+///     progress(0.5)
 #[pyfunction]
 unsafe fn progress(value: f32) -> PyResult<()> {
   let ui = current_ui(&UI)?;
@@ -878,9 +906,9 @@ unsafe fn progress(value: f32) -> PyResult<()> {
 
 /// A spinner widget used to indicate loading.
 ///
-/// Example:
+/// Example::
 ///
-/// spinner()
+///     spinner()
 #[pyfunction]
 unsafe fn spinner() -> PyResult<()> {
   let ui = current_ui(&UI)?;
@@ -891,12 +919,12 @@ unsafe fn spinner() -> PyResult<()> {
 
 /// Shows a button with the given color. If the user clicks the button, a full color picker is shown.
 /// 
-/// Example:
+/// Example::
 ///
-/// color = RGB(69, 69, 69)
-/// # inside udpate_func
-/// color_edit_button_rgb(color)
-/// heading(f"r:{color.r} g:{color.g} b:{color.b}")
+///     color = RGB(69, 69, 69)
+///     # inside udpate_func
+///     color_edit_button_rgb(color)
+///     heading(f"r:{color.r} g:{color.g} b:{color.b}")
 #[pyfunction]
 unsafe fn color_edit_button_rgb(rgb: &mut RGB) -> PyResult<()> {
   let ui = current_ui(&UI)?;
@@ -915,10 +943,10 @@ unsafe fn color_edit_button_rgb(rgb: &mut RGB) -> PyResult<()> {
 
 /// Show an image available at the given uri.
 ///
-/// Example:
+/// Example::
 ///
-/// image("https://picsum.photos/480")
-/// image("file://assets/ferris.png", max_height = 50, max_width = 50)
+///     image("https://picsum.photos/480")
+///     image("file://assets/ferris.png", max_height = 50, max_width = 50)
 #[pyfunction]
 #[pyo3(signature = (source, **kwargs))]
 unsafe fn image(
@@ -943,10 +971,10 @@ unsafe fn image(
 
 /// Creates a button with an image to the left of the text 
 ///
-/// Example:
+/// Example::
 ///
-/// if image_and_text_clicked("https://picsum.photos/480", "click me"):
-///   print("clicked")
+///     if image_and_text_clicked("https://picsum.photos/480", "click me"):
+///       print("clicked")
 #[pyfunction]
 unsafe fn image_and_text_clicked(source: &str, text: &str) -> PyResult<bool> {
   let ui = current_ui(&UI)?;
@@ -956,8 +984,9 @@ unsafe fn image_and_text_clicked(source: &str, text: &str) -> PyResult<bool> {
 
 /// A visual separator. A horizontal or vertical line on layout.
 ///
-/// Example:
-/// separator()
+/// Example::
+///
+///     separator()
 #[pyfunction]
 unsafe fn separator() -> PyResult<()> {
   let ui = current_ui(&UI)?;
@@ -973,9 +1002,10 @@ unsafe fn separator() -> PyResult<()> {
 /// 
 /// Once invisible, there is no way to make the Ui visible again.
 ///
-/// Example:
-/// set_invisible()
-/// heading("this will not be visible")
+/// Example::
+///
+///     set_invisible()
+///     heading("this will not be visible")
 #[pyfunction]
 unsafe fn set_invisible() -> PyResult<()> {
   let ui = current_ui(&UI)?;
@@ -990,11 +1020,11 @@ unsafe fn set_invisible() -> PyResult<()> {
 /// 
 /// Note that once disabled, there is no way to re-enable the Ui.
 ///
-/// Example:
+/// Example::
 ///
-/// disable()
-/// if button_clicked("you can't click me"):
-///   pass
+///     disable()
+///     if button_clicked("you can't click me"):
+///       pass
 #[pyfunction]
 unsafe fn disable() -> PyResult<()> {
   let ui = current_ui(&UI)?;
@@ -1007,9 +1037,10 @@ unsafe fn disable() -> PyResult<()> {
 /// 
 /// If you call add_enabled from within an already disabled Ui, the result will always be disabled, even if the enabled argument is true.
 /// 
-/// Example:
-/// add_enabled(False, lambda: button_clicked("you can't click me"))
-/// button_clicked("but you can click me")
+/// Example::
+///
+///     add_enabled(False, lambda: button_clicked("you can't click me"))
+///     button_clicked("but you can click me")
 #[pyfunction]
 unsafe fn add_enabled(enabled: bool, update_fun: Bound<'_, PyAny>) -> PyResult<()> {
 
@@ -1019,9 +1050,9 @@ unsafe fn add_enabled(enabled: bool, update_fun: Bound<'_, PyAny>) -> PyResult<(
 /// Make the widget in this Ui semi-transparent.
 /// 
 /// opacity must be between 0.0 and 1.0, where 0.0 means fully transparent (i.e., invisible) and 1.0 means fully opaque.
-/// Example:
+/// Example::
 ///
-/// set_opacity(0.5)
+///     set_opacity(0.5)
 #[pyfunction]
 unsafe fn set_opacity(opacity: f32) -> PyResult<()> {
   let ui = current_ui(&UI)?;
@@ -1033,10 +1064,11 @@ unsafe fn set_opacity(opacity: f32) -> PyResult<()> {
 
 /// Shows a date, and will open a date picker popup when clicked.
 /// 
-/// Example:
-/// date = Date(datetime.datetime.now())
-/// # inside update_func
-/// date_picker_button(date)
+/// Example::
+///
+///     date = Date(datetime.datetime.now())
+///     # inside update_func
+///     date_picker_button(date)
 #[pyfunction]
 unsafe fn date_picker_button(selection: &mut Date) -> PyResult<()> {
   let ui = current_ui(&UI)?;
@@ -1048,10 +1080,10 @@ unsafe fn date_picker_button(selection: &mut Date) -> PyResult<()> {
 /// Add extra space before the next widget.
 /// 
 /// The direction is dependent on the layout.
-/// Example:
+/// Example::
 ///
-/// add_space(5)
-/// heading("I'm so spaced now")
+///     add_space(5)
+///     heading("I'm so spaced now")
 #[pyfunction]
 unsafe fn add_space(amount: f32) -> PyResult<()> {
   let ui = current_ui(&UI)?;
@@ -1060,7 +1092,6 @@ unsafe fn add_space(amount: f32) -> PyResult<()> {
   Ok(())
 }
 
-/// A Python module implemented in Rust.
 #[pymodule]
 fn pyegui(m: &Bound<'_, PyModule>) -> PyResult<()> {
 	pyo3_log::init();
