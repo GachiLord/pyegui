@@ -24,30 +24,44 @@ static UI_CALL_OUTSIDE_UPDATE_FUNC: &'static str = "UI functions should be calle
 
 // classes
 
+/// Context object that controls global aspects of your app
+///
+/// Usage::
+///
+///     def update_func(ctx):
+///         ctx.set_light_theme
+///         heading("Using light theme even if system's is dark")
+///
+///     run_native("My app", update_func)
 #[pyclass]
 struct Context(egui::Context);
 
 #[pymethods]
 impl Context {
 
-  #[getter]
+    /// True when theme is dark
+    #[getter]
     fn is_light_theme(&self) -> bool {
         self.0.theme() == egui::Theme::Light    
     }
 
+    /// True when theme is dark
     #[getter]
     fn is_dark_theme(&self) -> bool {
         self.0.theme() == egui::Theme::Dark
     }
 
+    /// Sets light theme. Default is system's
     fn set_light_theme(&self) {
         self.0.set_theme(egui::ThemePreference::Light);        
     }
 
+    /// Sets dark theme. Default is system's
     fn set_dark_theme(&self) {
         self.0.set_theme(egui::ThemePreference::Dark);        
     }
 
+    /// Sets system's theme if it has been changed.
     fn set_system_theme(&self) {
         self.0.set_theme(egui::ThemePreference::System);        
     }
@@ -98,6 +112,16 @@ impl Context {
     }
 }
 
+/// Str stores string value that can be referenced
+///
+/// Usage::
+///
+///     data = Str("")
+///     
+///     def update_func():
+///         heading(f"Value of the data is {data.value}")
+///         if button_clicked("Add :)"):
+///             data.value += ":) "
 #[pyclass]
 struct Str {
     #[pyo3(get, set)]
@@ -112,6 +136,20 @@ impl Str {
     }
 }
 
+
+/// Bool stores a boolean value that can be referenced
+///
+/// Usage::
+///
+///     data = Bool(False)
+///     
+///     def update_func():
+///         heading(f"Value of the data is {data.value}")
+///         # button will be shown only if the checkbox is checked 
+///         if data.value and button_clicked("set to False"):
+///             # hiding the button
+///             data.value = False
+///         checkbox(data, "Check me")
 #[pyclass]
 struct Bool {
     #[pyo3(get, set)]
@@ -126,6 +164,16 @@ impl Bool {
     }
 }
 
+/// Int stores integer value that can be referenced
+///
+/// Usage::
+///
+///     data = Int(69)
+///     
+///     def update_func():
+///         heading(f"Value of the data is {data.value}")
+///         if button_clicked("Increment"):
+///             data.value += 1
 #[pyclass]
 struct Int {
     #[pyo3(get, set)]
@@ -140,6 +188,17 @@ impl Int {
     }
 }
 
+/// Float stores float value that can be referenced
+///
+/// Usage::
+///
+///     data = Float(69.0)
+///     
+///     def update_func():
+///         heading(f"Value of the data is {data.value}")
+///         if button_clicked("Increment"):
+///             # what can go wrong?
+///             data.value += 0.1
 #[pyclass]
 struct Float {
     #[pyo3(get, set)]

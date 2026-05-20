@@ -28,5 +28,5 @@ develop:
 venv:
 	python3 -m venv .venv
 	.venv/bin/pip install maturin
-	.venv/bin/pip install sphinx
+	.venv/bin/pip install sphinx sphinx-rtd-theme
 
