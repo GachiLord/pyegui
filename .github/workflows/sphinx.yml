@@ -21,6 +21,7 @@ jobs:
         with:
           python-version: '3.13'
       - run: |
+          pip install ./pyegui*.whl
           pip install sphinx sphinx-rtd-theme
           sphinx-build -v ./docs/ ./docs/.build
       - name: Upload static files as artifact
