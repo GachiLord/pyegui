@@ -1,0 +1,711 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>UI functions &mdash; pyegui  documentation</title>
+      <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=9edc463e" />
+
+  
+      <script src="../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../_static/documentation_options.js?v=5929fcd5"></script>
+      <script src="../_static/doctools.js?v=fd6eb6e6"></script>
+      <script src="../_static/sphinx_highlight.js?v=6ffebe34"></script>
+    <script src="../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Context" href="context.html" />
+    <link rel="prev" title="Examples" href="../examlpes.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../index.html" class="icon icon-home">
+            pyegui
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../guides.html">How to</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../examlpes.html">Examples</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">API reference:</span></p>
+<ul class="current">
+<li class="toctree-l1 current"><a class="current reference internal" href="#">UI functions</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#pyegui.add_enabled"><code class="docutils literal notranslate"><span class="pre">add_enabled()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#pyegui.add_space"><code class="docutils literal notranslate"><span class="pre">add_space()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#pyegui.button_clicked"><code class="docutils literal notranslate"><span class="pre">button_clicked()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#pyegui.checkbox"><code class="docutils literal notranslate"><span class="pre">checkbox()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#pyegui.code"><code class="docutils literal notranslate"><span class="pre">code()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#pyegui.code_editor"><code class="docutils literal notranslate"><span class="pre">code_editor()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#pyegui.collapsing"><code class="docutils literal notranslate"><span class="pre">collapsing()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#pyegui.color_edit_button_rgb"><code class="docutils literal notranslate"><span class="pre">color_edit_button_rgb()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#pyegui.combo_box"><code class="docutils literal notranslate"><span class="pre">combo_box()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#pyegui.date_picker_button"><code class="docutils literal notranslate"><span class="pre">date_picker_button()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#pyegui.disable"><code class="docutils literal notranslate"><span class="pre">disable()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#pyegui.drag_float"><code class="docutils literal notranslate"><span class="pre">drag_float()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#pyegui.drag_int"><code class="docutils literal notranslate"><span class="pre">drag_int()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#pyegui.group"><code class="docutils literal notranslate"><span class="pre">group()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#pyegui.heading"><code class="docutils literal notranslate"><span class="pre">heading()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#pyegui.horizontal"><code class="docutils literal notranslate"><span class="pre">horizontal()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#pyegui.horizontal_centered"><code class="docutils literal notranslate"><span class="pre">horizontal_centered()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#pyegui.horizontal_top"><code class="docutils literal notranslate"><span class="pre">horizontal_top()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#pyegui.horizontal_wrapped"><code class="docutils literal notranslate"><span class="pre">horizontal_wrapped()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#pyegui.hyperlink"><code class="docutils literal notranslate"><span class="pre">hyperlink()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#pyegui.hyperlink_to"><code class="docutils literal notranslate"><span class="pre">hyperlink_to()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#pyegui.image"><code class="docutils literal notranslate"><span class="pre">image()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#pyegui.image_and_text_clicked"><code class="docutils literal notranslate"><span class="pre">image_and_text_clicked()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#pyegui.indent"><code class="docutils literal notranslate"><span class="pre">indent()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#pyegui.label"><code class="docutils literal notranslate"><span class="pre">label()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#pyegui.link_clicked"><code class="docutils literal notranslate"><span class="pre">link_clicked()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#pyegui.monospace"><code class="docutils literal notranslate"><span class="pre">monospace()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#pyegui.progress"><code class="docutils literal notranslate"><span class="pre">progress()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#pyegui.radio_value"><code class="docutils literal notranslate"><span class="pre">radio_value()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#pyegui.run_native"><code class="docutils literal notranslate"><span class="pre">run_native()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#pyegui.scope"><code class="docutils literal notranslate"><span class="pre">scope()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#pyegui.selectable_value"><code class="docutils literal notranslate"><span class="pre">selectable_value()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#pyegui.separator"><code class="docutils literal notranslate"><span class="pre">separator()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#pyegui.set_invisible"><code class="docutils literal notranslate"><span class="pre">set_invisible()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#pyegui.set_opacity"><code class="docutils literal notranslate"><span class="pre">set_opacity()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#pyegui.slider_float"><code class="docutils literal notranslate"><span class="pre">slider_float()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#pyegui.slider_int"><code class="docutils literal notranslate"><span class="pre">slider_int()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#pyegui.small"><code class="docutils literal notranslate"><span class="pre">small()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#pyegui.small_button_clicked"><code class="docutils literal notranslate"><span class="pre">small_button_clicked()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#pyegui.spinner"><code class="docutils literal notranslate"><span class="pre">spinner()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#pyegui.strong"><code class="docutils literal notranslate"><span class="pre">strong()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#pyegui.text_edit_multiline"><code class="docutils literal notranslate"><span class="pre">text_edit_multiline()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#pyegui.text_edit_singleline"><code class="docutils literal notranslate"><span class="pre">text_edit_singleline()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#pyegui.toggle_value"><code class="docutils literal notranslate"><span class="pre">toggle_value()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#pyegui.weak"><code class="docutils literal notranslate"><span class="pre">weak()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="context.html">Context</a></li>
+<li class="toctree-l1"><a class="reference internal" href="widgets.html">Widgets</a></li>
+<li class="toctree-l1"><a class="reference internal" href="helpers.html">Helpers</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">pyegui</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">UI functions</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../_sources/module/ui.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="module-pyegui">
+<span id="ui-functions"></span><h1>UI functions<a class="headerlink" href="#module-pyegui" title="Link to this heading"></a></h1>
+<dl class="py function">
+<dt class="sig sig-object py" id="pyegui.add_enabled">
+<span class="sig-prename descclassname"><span class="pre">pyegui.</span></span><span class="sig-name descname"><span class="pre">add_enabled</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">enabled</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">update_fun</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pyegui.add_enabled" title="Link to this definition"></a></dt>
+<dd><p>Add a section that is possibly disabled, i.e. greyed out and non-interactive.</p>
+<p>If you call add_enabled from within an already disabled Ui, the result will always be disabled, even if the enabled argument is true.</p>
+<p>Example:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">add_enabled</span><span class="p">(</span><span class="kc">False</span><span class="p">,</span> <span class="k">lambda</span><span class="p">:</span> <span class="n">button_clicked</span><span class="p">(</span><span class="s2">&quot;you can&#39;t click me&quot;</span><span class="p">))</span>
+<span class="n">button_clicked</span><span class="p">(</span><span class="s2">&quot;but you can click me&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="pyegui.add_space">
+<span class="sig-prename descclassname"><span class="pre">pyegui.</span></span><span class="sig-name descname"><span class="pre">add_space</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">amount</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pyegui.add_space" title="Link to this definition"></a></dt>
+<dd><p>Add extra space before the next widget.</p>
+<p>The direction is dependent on the layout.
+Example:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">add_space</span><span class="p">(</span><span class="mi">5</span><span class="p">)</span>
+<span class="n">heading</span><span class="p">(</span><span class="s2">&quot;I&#39;m so spaced now&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="pyegui.button_clicked">
+<span class="sig-prename descclassname"><span class="pre">pyegui.</span></span><span class="sig-name descname"><span class="pre">button_clicked</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">text</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pyegui.button_clicked" title="Link to this definition"></a></dt>
+<dd><p>Returns true if the button was clicked this frame</p>
+<dl class="simple">
+<dt>if button_clicked(“click me”):</dt><dd><p>print(“click me, my friend”)</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="pyegui.checkbox">
+<span class="sig-prename descclassname"><span class="pre">pyegui.</span></span><span class="sig-name descname"><span class="pre">checkbox</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">checked</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">text</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pyegui.checkbox" title="Link to this definition"></a></dt>
+<dd><p>Show a checkbox.</p>
+<p>Example:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">data</span> <span class="o">=</span> <span class="n">Bool</span><span class="p">(</span><span class="n">false</span><span class="p">)</span>
+<span class="c1"># inside update_func</span>
+<span class="n">checkbox</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="s2">&quot;check me&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="pyegui.code">
+<span class="sig-prename descclassname"><span class="pre">pyegui.</span></span><span class="sig-name descname"><span class="pre">code</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">text</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pyegui.code" title="Link to this definition"></a></dt>
+<dd><p>Show text as monospace with a gray background.</p>
+<p>Example:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">code</span><span class="p">(</span><span class="s2">&quot;print(42 + 27)&quot;</span><span class="p">)</span> 
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="pyegui.code_editor">
+<span class="sig-prename descclassname"><span class="pre">pyegui.</span></span><span class="sig-name descname"><span class="pre">code_editor</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">text</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pyegui.code_editor" title="Link to this definition"></a></dt>
+<dd><p>Show singleline text field and update the text</p>
+<p>Example:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">text</span> <span class="o">=</span> <span class="n">Str</span><span class="p">(</span><span class="s2">&quot;print(42 + 27)&quot;</span><span class="p">)</span>
+<span class="c1"># inside update func</span>
+<span class="n">code_editor</span><span class="p">(</span><span class="n">text</span><span class="p">)</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="pyegui.collapsing">
+<span class="sig-prename descclassname"><span class="pre">pyegui.</span></span><span class="sig-name descname"><span class="pre">collapsing</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">heading</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">update_fun</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pyegui.collapsing" title="Link to this definition"></a></dt>
+<dd><p>A CollapsingHeader that starts out collapsed.</p>
+<p>Example:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="k">def</span><span class="w"> </span><span class="nf">update_func</span><span class="p">():</span>
+  <span class="n">heading</span><span class="p">(</span><span class="s2">&quot;hi&quot;</span><span class="p">)</span>
+<span class="n">collapsing</span><span class="p">(</span><span class="s2">&quot;collapsed&quot;</span><span class="p">,</span> <span class="n">update_func</span><span class="p">)</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="pyegui.color_edit_button_rgb">
+<span class="sig-prename descclassname"><span class="pre">pyegui.</span></span><span class="sig-name descname"><span class="pre">color_edit_button_rgb</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">rgb</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pyegui.color_edit_button_rgb" title="Link to this definition"></a></dt>
+<dd><p>Shows a button with the given color. If the user clicks the button, a full color picker is shown.</p>
+<p>Example:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">color</span> <span class="o">=</span> <span class="n">RGB</span><span class="p">(</span><span class="mi">69</span><span class="p">,</span> <span class="mi">69</span><span class="p">,</span> <span class="mi">69</span><span class="p">)</span>
+<span class="c1"># inside udpate_func</span>
+<span class="n">color_edit_button_rgb</span><span class="p">(</span><span class="n">color</span><span class="p">)</span>
+<span class="n">heading</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;r:</span><span class="si">{</span><span class="n">color</span><span class="o">.</span><span class="n">r</span><span class="si">}</span><span class="s2"> g:</span><span class="si">{</span><span class="n">color</span><span class="o">.</span><span class="n">g</span><span class="si">}</span><span class="s2"> b:</span><span class="si">{</span><span class="n">color</span><span class="o">.</span><span class="n">b</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="pyegui.combo_box">
+<span class="sig-prename descclassname"><span class="pre">pyegui.</span></span><span class="sig-name descname"><span class="pre">combo_box</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">current_value</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">alternatives</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">names</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">label</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pyegui.combo_box" title="Link to this definition"></a></dt>
+<dd><p>Shows a combo box with values defined in “alternatives” and their corresponding names
+defined in “names”</p>
+<p>Example:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">RED</span> <span class="o">=</span> <span class="mi">0</span>
+<span class="n">GREEN</span> <span class="o">=</span> <span class="mi">1</span>
+<span class="n">BLUE</span> <span class="o">=</span> <span class="mi">2</span>
+
+<span class="n">data</span> <span class="o">=</span> <span class="n">Int</span><span class="p">(</span><span class="n">RED</span><span class="p">)</span>
+
+<span class="k">def</span><span class="w"> </span><span class="nf">update_func</span><span class="p">(</span><span class="n">a</span><span class="p">):</span>
+    <span class="n">combo_box</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="p">[</span><span class="n">RED</span><span class="p">,</span> <span class="n">GREEN</span><span class="p">,</span> <span class="n">BLUE</span><span class="p">],</span> <span class="p">[</span><span class="s2">&quot;red&quot;</span><span class="p">,</span> <span class="s2">&quot;green&quot;</span><span class="p">,</span> <span class="s2">&quot;blue&quot;</span><span class="p">],</span> <span class="s2">&quot;choose your fate&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="pyegui.date_picker_button">
+<span class="sig-prename descclassname"><span class="pre">pyegui.</span></span><span class="sig-name descname"><span class="pre">date_picker_button</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">selection</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pyegui.date_picker_button" title="Link to this definition"></a></dt>
+<dd><p>Shows a date, and will open a date picker popup when clicked.</p>
+<p>Example:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">date</span> <span class="o">=</span> <span class="n">Date</span><span class="p">(</span><span class="n">datetime</span><span class="o">.</span><span class="n">datetime</span><span class="o">.</span><span class="n">now</span><span class="p">())</span>
+<span class="c1"># inside update_func</span>
+<span class="n">date_picker_button</span><span class="p">(</span><span class="n">date</span><span class="p">)</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="pyegui.disable">
+<span class="sig-prename descclassname"><span class="pre">pyegui.</span></span><span class="sig-name descname"><span class="pre">disable</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#pyegui.disable" title="Link to this definition"></a></dt>
+<dd><p>Calling disable() will cause the Ui to deny all future interaction and all the widgets will draw with a gray look.</p>
+<p>Usually it is more convenient to use add_enabled.</p>
+<p>Note that once disabled, there is no way to re-enable the Ui.</p>
+<p>Example:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">disable</span><span class="p">()</span>
+<span class="k">if</span> <span class="n">button_clicked</span><span class="p">(</span><span class="s2">&quot;you can&#39;t click me&quot;</span><span class="p">):</span>
+  <span class="k">pass</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="pyegui.drag_float">
+<span class="sig-prename descclassname"><span class="pre">pyegui.</span></span><span class="sig-name descname"><span class="pre">drag_float</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">value</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">min</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">max</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">speed</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pyegui.drag_float" title="Link to this definition"></a></dt>
+<dd><p>Control float by dragging the number.</p>
+<p>Example:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">data</span> <span class="o">=</span> <span class="n">Float</span><span class="p">(</span><span class="mi">5</span><span class="p">)</span> 
+<span class="c1"># inside update_func </span>
+<span class="n">drag_float</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">50</span><span class="p">,</span> <span class="mf">1.5</span><span class="p">)</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="pyegui.drag_int">
+<span class="sig-prename descclassname"><span class="pre">pyegui.</span></span><span class="sig-name descname"><span class="pre">drag_int</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">value</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">min</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">max</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">speed</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pyegui.drag_int" title="Link to this definition"></a></dt>
+<dd><p>Control int by dragging the number.</p>
+<p>Example:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">data</span> <span class="o">=</span> <span class="n">Int</span><span class="p">(</span><span class="mi">5</span><span class="p">)</span> 
+<span class="c1"># inside update_func </span>
+<span class="n">drag_int</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">50</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="pyegui.group">
+<span class="sig-prename descclassname"><span class="pre">pyegui.</span></span><span class="sig-name descname"><span class="pre">group</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">update_fun</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pyegui.group" title="Link to this definition"></a></dt>
+<dd><p>Visually groups the contents together.</p>
+<p>Example:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="k">def</span><span class="w"> </span><span class="nf">update_func</span><span class="p">():</span>
+  <span class="n">heading</span><span class="p">(</span><span class="s2">&quot;hi&quot;</span><span class="p">)</span>
+  <span class="n">heading</span><span class="p">(</span><span class="s2">&quot;there&quot;</span><span class="p">)</span>
+
+<span class="n">group</span><span class="p">(</span><span class="n">update_func</span><span class="p">)</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="pyegui.heading">
+<span class="sig-prename descclassname"><span class="pre">pyegui.</span></span><span class="sig-name descname"><span class="pre">heading</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">text</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pyegui.heading" title="Link to this definition"></a></dt>
+<dd><p>Show large text</p>
+<p>Example:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">heading</span><span class="p">(</span><span class="s2">&quot;hello&quot;</span><span class="p">)</span> 
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="pyegui.horizontal">
+<span class="sig-prename descclassname"><span class="pre">pyegui.</span></span><span class="sig-name descname"><span class="pre">horizontal</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">update_fun</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pyegui.horizontal" title="Link to this definition"></a></dt>
+<dd><p>Start a ui with horizontal layout. After you have called this, the function registers the contents as any other widget.</p>
+<p>Elements will be centered on the Y axis, i.e. adjusted up and down to lie in the center of the horizontal layout. The initial height is style.spacing.interact_size.y. Centering is almost always what you want if you are planning to mix widgets or use different types of text.</p>
+<p>If you don’t want the contents to be centered, use horizontal_top instead.</p>
+<p>Example:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="k">def</span><span class="w"> </span><span class="nf">horizontal_update_func</span><span class="p">():</span>
+  <span class="n">heading</span><span class="p">(</span><span class="s2">&quot;I&#39;m horizontal&quot;</span><span class="p">)</span>
+
+<span class="n">horizontal</span><span class="p">(</span><span class="n">horizontal_update_func</span><span class="p">)</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="pyegui.horizontal_centered">
+<span class="sig-prename descclassname"><span class="pre">pyegui.</span></span><span class="sig-name descname"><span class="pre">horizontal_centered</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">update_fun</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pyegui.horizontal_centered" title="Link to this definition"></a></dt>
+<dd><p>Like horizontal, but allocates the full vertical height and then centers elements vertically.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="pyegui.horizontal_top">
+<span class="sig-prename descclassname"><span class="pre">pyegui.</span></span><span class="sig-name descname"><span class="pre">horizontal_top</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">update_fun</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pyegui.horizontal_top" title="Link to this definition"></a></dt>
+<dd><p>Like horizontal, but aligns content with top.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="pyegui.horizontal_wrapped">
+<span class="sig-prename descclassname"><span class="pre">pyegui.</span></span><span class="sig-name descname"><span class="pre">horizontal_wrapped</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">update_fun</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pyegui.horizontal_wrapped" title="Link to this definition"></a></dt>
+<dd><p>Start a ui with horizontal layout that wraps to a new row when it reaches the right edge of the max_size. After you have called this, the function registers the contents as any other widget.</p>
+<p>Elements will be centered on the Y axis, i.e. adjusted up and down to lie in the center of the horizontal layout. The initial height is style.spacing.interact_size.y. Centering is almost always what you want if you are planning to mix widgets or use different types of text.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="pyegui.hyperlink">
+<span class="sig-prename descclassname"><span class="pre">pyegui.</span></span><span class="sig-name descname"><span class="pre">hyperlink</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">url</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pyegui.hyperlink" title="Link to this definition"></a></dt>
+<dd><p>A clickable hyperlink</p>
+<p>Example:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">hyperlink</span><span class="p">(</span><span class="s2">&quot;https://github.com/emilk/egui&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="pyegui.hyperlink_to">
+<span class="sig-prename descclassname"><span class="pre">pyegui.</span></span><span class="sig-name descname"><span class="pre">hyperlink_to</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">label</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">url</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pyegui.hyperlink_to" title="Link to this definition"></a></dt>
+<dd><p>A clickable hyperlink with label</p>
+<p>Example:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">hyperlink_to</span><span class="p">(</span><span class="s2">&quot;egui on GitHub&quot;</span><span class="p">,</span> <span class="s2">&quot;https://www.github.com/emilk/egui/&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="pyegui.image">
+<span class="sig-prename descclassname"><span class="pre">pyegui.</span></span><span class="sig-name descname"><span class="pre">image</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">source</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pyegui.image" title="Link to this definition"></a></dt>
+<dd><p>Show an image available at the given uri.</p>
+<p>Example:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">image</span><span class="p">(</span><span class="s2">&quot;https://picsum.photos/480&quot;</span><span class="p">)</span>
+<span class="n">image</span><span class="p">(</span><span class="s2">&quot;file://assets/ferris.png&quot;</span><span class="p">,</span> <span class="n">max_height</span> <span class="o">=</span> <span class="mi">50</span><span class="p">,</span> <span class="n">max_width</span> <span class="o">=</span> <span class="mi">50</span><span class="p">)</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="pyegui.image_and_text_clicked">
+<span class="sig-prename descclassname"><span class="pre">pyegui.</span></span><span class="sig-name descname"><span class="pre">image_and_text_clicked</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">source</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">text</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pyegui.image_and_text_clicked" title="Link to this definition"></a></dt>
+<dd><p>Creates a button with an image to the left of the text</p>
+<p>Example:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="k">if</span> <span class="n">image_and_text_clicked</span><span class="p">(</span><span class="s2">&quot;https://picsum.photos/480&quot;</span><span class="p">,</span> <span class="s2">&quot;click me&quot;</span><span class="p">):</span>
+  <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;clicked&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="pyegui.indent">
+<span class="sig-prename descclassname"><span class="pre">pyegui.</span></span><span class="sig-name descname"><span class="pre">indent</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">update_fun</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pyegui.indent" title="Link to this definition"></a></dt>
+<dd><p>Create a child ui which is indented to the right.
+Example:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="k">def</span><span class="w"> </span><span class="nf">update_func</span><span class="p">():</span>
+  <span class="n">heading</span><span class="p">(</span><span class="s2">&quot;I&#39;m indented&quot;</span><span class="p">)</span>
+<span class="n">indent</span><span class="p">(</span><span class="n">update_func</span><span class="p">)</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="pyegui.label">
+<span class="sig-prename descclassname"><span class="pre">pyegui.</span></span><span class="sig-name descname"><span class="pre">label</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">text</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pyegui.label" title="Link to this definition"></a></dt>
+<dd><p>Show some text.</p>
+<p>Example:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">label</span><span class="p">(</span><span class="s2">&quot;some text&quot;</span><span class="p">)</span> 
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="pyegui.link_clicked">
+<span class="sig-prename descclassname"><span class="pre">pyegui.</span></span><span class="sig-name descname"><span class="pre">link_clicked</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">label</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pyegui.link_clicked" title="Link to this definition"></a></dt>
+<dd><p>Clickable text, that looks like a hyperlink.
+To link to a web page, use hyperlink or hyperlink_to.</p>
+<p>Example:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="k">if</span> <span class="n">link_clicked</span><span class="p">(</span><span class="s2">&quot;egui on GitHub&quot;</span><span class="p">):</span>
+  <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;clicked on a fake link&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="pyegui.monospace">
+<span class="sig-prename descclassname"><span class="pre">pyegui.</span></span><span class="sig-name descname"><span class="pre">monospace</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">text</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pyegui.monospace" title="Link to this definition"></a></dt>
+<dd><p>Show monospace (fixed width) text.</p>
+<p>Example:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">monospace</span><span class="p">(</span><span class="s2">&quot;hello&quot;</span><span class="p">)</span> 
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="pyegui.progress">
+<span class="sig-prename descclassname"><span class="pre">pyegui.</span></span><span class="sig-name descname"><span class="pre">progress</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">value</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pyegui.progress" title="Link to this definition"></a></dt>
+<dd><p>A simple progress bar.
+value in the [0, 1] range, where 1 means “completed”.</p>
+<p>Example:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">progress</span><span class="p">(</span><span class="mf">0.5</span><span class="p">)</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="pyegui.radio_value">
+<span class="sig-prename descclassname"><span class="pre">pyegui.</span></span><span class="sig-name descname"><span class="pre">radio_value</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">current_value</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">alternative</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">text</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pyegui.radio_value" title="Link to this definition"></a></dt>
+<dd><p>Show a radio button. It is selected if current_value == selected_value. If clicked, selected_value is assigned to current_value.</p>
+<p>Example:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">RED</span> <span class="o">=</span> <span class="mi">0</span>
+<span class="n">GREEN</span> <span class="o">=</span> <span class="mi">1</span>
+<span class="n">BLUE</span> <span class="o">=</span> <span class="mi">2</span>
+
+<span class="n">c</span> <span class="o">=</span> <span class="n">Int</span><span class="p">(</span><span class="n">RED</span><span class="p">)</span>
+
+<span class="n">radio_value</span><span class="p">(</span><span class="n">c</span><span class="p">,</span> <span class="n">RED</span><span class="p">,</span> <span class="s2">&quot;red&quot;</span><span class="p">)</span>
+<span class="n">radio_value</span><span class="p">(</span><span class="n">c</span><span class="p">,</span> <span class="n">GREEN</span><span class="p">,</span> <span class="s2">&quot;green&quot;</span><span class="p">)</span>
+<span class="n">radio_value</span><span class="p">(</span><span class="n">c</span><span class="p">,</span> <span class="n">BLUE</span><span class="p">,</span> <span class="s2">&quot;blue&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="pyegui.run_native">
+<span class="sig-prename descclassname"><span class="pre">pyegui.</span></span><span class="sig-name descname"><span class="pre">run_native</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">app_name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">update_func</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pyegui.run_native" title="Link to this definition"></a></dt>
+<dd><p>Creates a window and runs update_func.
+This is an entrypoint for your GUI application.</p>
+<dl>
+<dt>Args:</dt><dd><p>app_name (str): name displayed at the header bar</p>
+<p>update_func (Callable[[Context], None]): your function that draws UI</p>
+<p>inner_height (float): the desired height of the window</p>
+<p>inner_width (float): the desired width of the window</p>
+<p>min_inner_height (float): min height of the window</p>
+<p>min_inner_width (float): min width of the window</p>
+<p>max_inner_height (float): max height of the window</p>
+<p>max_inner_width (float): max width of the window</p>
+<p>fullscreen (bool): whether to open app in fullscreen</p>
+<p>maximized (bool): whether to open app maximized</p>
+<p>resizable (bool): whether our app is resizable</p>
+<p>transparent (bool): whether our app is transparent</p>
+<p>icon_path (str): path to icon in rgba format</p>
+</dd>
+</dl>
+<p>Examples:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">name</span> <span class="o">=</span> <span class="n">Str</span><span class="p">(</span><span class="s2">&quot;&quot;</span><span class="p">)</span>
+
+<span class="k">def</span><span class="w"> </span><span class="nf">update_func</span><span class="p">(</span><span class="n">ctx</span><span class="p">):</span>
+    <span class="n">heading</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Hello, </span><span class="si">{</span><span class="n">name</span><span class="o">.</span><span class="n">value</span><span class="si">}</span><span class="s2">!&quot;</span><span class="p">)</span>
+    <span class="n">text_edit_singleline</span><span class="p">(</span><span class="n">name</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">button_clicked</span><span class="p">(</span><span class="s2">&quot;click me&quot;</span><span class="p">):</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;clicked&quot;</span><span class="p">)</span>
+
+<span class="n">run_native</span><span class="p">(</span><span class="s2">&quot;My app&quot;</span><span class="p">,</span> <span class="n">update_func</span><span class="p">)</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="pyegui.scope">
+<span class="sig-prename descclassname"><span class="pre">pyegui.</span></span><span class="sig-name descname"><span class="pre">scope</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">update_fun</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pyegui.scope" title="Link to this definition"></a></dt>
+<dd><p>Create a scoped child ui.</p>
+<p>You can use this to temporarily change the Style of a sub-region.</p>
+<p>Example:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="k">def</span><span class="w"> </span><span class="nf">update_func</span><span class="p">():</span>
+  <span class="n">heading</span><span class="p">(</span><span class="s2">&quot;0.5 opacity&quot;</span><span class="p">)</span>
+  <span class="n">set_opacity</span><span class="p">(</span><span class="mf">0.5</span><span class="p">)</span>
+
+<span class="n">heading</span><span class="p">(</span><span class="s2">&quot;normal opacity&quot;</span><span class="p">)</span>
+<span class="n">scope</span><span class="p">(</span><span class="n">update_func</span><span class="p">)</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="pyegui.selectable_value">
+<span class="sig-prename descclassname"><span class="pre">pyegui.</span></span><span class="sig-name descname"><span class="pre">selectable_value</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">current_value</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">alternative</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">text</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pyegui.selectable_value" title="Link to this definition"></a></dt>
+<dd><p>Show selectable text. It is selected if current_value == selected_value. If clicked, selected_value is assigned to current_value.</p>
+<p>Example:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">RED</span> <span class="o">=</span> <span class="mi">0</span>
+<span class="n">GREEN</span> <span class="o">=</span> <span class="mi">1</span>
+<span class="n">BLUE</span> <span class="o">=</span> <span class="mi">2</span>
+
+<span class="n">c</span> <span class="o">=</span> <span class="n">Int</span><span class="p">(</span><span class="n">RED</span><span class="p">)</span>
+
+<span class="n">selectable_value</span><span class="p">(</span><span class="n">c</span><span class="p">,</span> <span class="n">RED</span><span class="p">,</span> <span class="s2">&quot;red&quot;</span><span class="p">)</span>
+<span class="n">selectable_value</span><span class="p">(</span><span class="n">c</span><span class="p">,</span> <span class="n">GREEN</span><span class="p">,</span> <span class="s2">&quot;green&quot;</span><span class="p">)</span>
+<span class="n">selectable_value</span><span class="p">(</span><span class="n">c</span><span class="p">,</span> <span class="n">BLUE</span><span class="p">,</span> <span class="s2">&quot;blue&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="pyegui.separator">
+<span class="sig-prename descclassname"><span class="pre">pyegui.</span></span><span class="sig-name descname"><span class="pre">separator</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#pyegui.separator" title="Link to this definition"></a></dt>
+<dd><p>A visual separator. A horizontal or vertical line on layout.</p>
+<p>Example:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">separator</span><span class="p">()</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="pyegui.set_invisible">
+<span class="sig-prename descclassname"><span class="pre">pyegui.</span></span><span class="sig-name descname"><span class="pre">set_invisible</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#pyegui.set_invisible" title="Link to this definition"></a></dt>
+<dd><p>Calling set_invisible() will cause all further widgets to be invisible, yet still allocate space.</p>
+<p>The widgets will not be interactive (set_invisible() implies disable()).</p>
+<p>Once invisible, there is no way to make the Ui visible again.</p>
+<p>Example:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">set_invisible</span><span class="p">()</span>
+<span class="n">heading</span><span class="p">(</span><span class="s2">&quot;this will not be visible&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="pyegui.set_opacity">
+<span class="sig-prename descclassname"><span class="pre">pyegui.</span></span><span class="sig-name descname"><span class="pre">set_opacity</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">opacity</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pyegui.set_opacity" title="Link to this definition"></a></dt>
+<dd><p>Make the widget in this Ui semi-transparent.</p>
+<p>opacity must be between 0.0 and 1.0, where 0.0 means fully transparent (i.e., invisible) and 1.0 means fully opaque.
+Example:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">set_opacity</span><span class="p">(</span><span class="mf">0.5</span><span class="p">)</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="pyegui.slider_float">
+<span class="sig-prename descclassname"><span class="pre">pyegui.</span></span><span class="sig-name descname"><span class="pre">slider_float</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">value</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">min</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">max</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">text</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pyegui.slider_float" title="Link to this definition"></a></dt>
+<dd><p>Control float with a slider.</p>
+<p>Example:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">data</span> <span class="o">=</span> <span class="n">Float</span><span class="p">(</span><span class="mi">5</span><span class="p">)</span> 
+<span class="c1"># inside update_func </span>
+<span class="n">slider_float</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">50</span><span class="p">,</span> <span class="s2">&quot;slide me&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="pyegui.slider_int">
+<span class="sig-prename descclassname"><span class="pre">pyegui.</span></span><span class="sig-name descname"><span class="pre">slider_int</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">value</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">min</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">max</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">text</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pyegui.slider_int" title="Link to this definition"></a></dt>
+<dd><p>Control int with a slider.</p>
+<p>Example:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">data</span> <span class="o">=</span> <span class="n">Int</span><span class="p">(</span><span class="mi">5</span><span class="p">)</span> 
+<span class="c1"># inside update_func </span>
+<span class="n">slider_int</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">50</span><span class="p">,</span> <span class="s2">&quot;slide me&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="pyegui.small">
+<span class="sig-prename descclassname"><span class="pre">pyegui.</span></span><span class="sig-name descname"><span class="pre">small</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">text</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pyegui.small" title="Link to this definition"></a></dt>
+<dd><p>Show small text.</p>
+<p>Example:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">small</span><span class="p">(</span><span class="s2">&quot;hello&quot;</span><span class="p">)</span> 
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="pyegui.small_button_clicked">
+<span class="sig-prename descclassname"><span class="pre">pyegui.</span></span><span class="sig-name descname"><span class="pre">small_button_clicked</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">text</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pyegui.small_button_clicked" title="Link to this definition"></a></dt>
+<dd><p>Returns true if the small button was clicked this frame</p>
+<dl class="simple">
+<dt>if small_button_clicked(“click me”):</dt><dd><p>print(“click me, my friend”)</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="pyegui.spinner">
+<span class="sig-prename descclassname"><span class="pre">pyegui.</span></span><span class="sig-name descname"><span class="pre">spinner</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#pyegui.spinner" title="Link to this definition"></a></dt>
+<dd><p>A spinner widget used to indicate loading.</p>
+<p>Example:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">spinner</span><span class="p">()</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="pyegui.strong">
+<span class="sig-prename descclassname"><span class="pre">pyegui.</span></span><span class="sig-name descname"><span class="pre">strong</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">text</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pyegui.strong" title="Link to this definition"></a></dt>
+<dd><p>Show text that stand out a bit (e.g. slightly brighter).</p>
+<p>Example:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">strong</span><span class="p">(</span><span class="s2">&quot;hello&quot;</span><span class="p">)</span> 
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="pyegui.text_edit_multiline">
+<span class="sig-prename descclassname"><span class="pre">pyegui.</span></span><span class="sig-name descname"><span class="pre">text_edit_multiline</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">text</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pyegui.text_edit_multiline" title="Link to this definition"></a></dt>
+<dd><p>Show multiline text field and update the text</p>
+<p>Example:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">text</span> <span class="o">=</span> <span class="n">Str</span><span class="p">(</span><span class="s2">&quot;editable&quot;</span><span class="p">)</span>
+<span class="c1"># inside update func</span>
+<span class="n">text_edit_multiline</span><span class="p">(</span><span class="n">text</span><span class="p">,</span> <span class="n">hint_text</span><span class="o">=</span><span class="s2">&quot;hint&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="pyegui.text_edit_singleline">
+<span class="sig-prename descclassname"><span class="pre">pyegui.</span></span><span class="sig-name descname"><span class="pre">text_edit_singleline</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">text</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pyegui.text_edit_singleline" title="Link to this definition"></a></dt>
+<dd><p>Show singleline text field and update the text</p>
+<p>Example:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">text</span> <span class="o">=</span> <span class="n">Str</span><span class="p">(</span><span class="s2">&quot;editable&quot;</span><span class="p">)</span>
+<span class="c1"># inside update func</span>
+<span class="n">text_edit_singleline</span><span class="p">(</span><span class="n">text</span><span class="p">,</span> <span class="n">hint_text</span><span class="o">=</span><span class="s2">&quot;hint me bro&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="pyegui.toggle_value">
+<span class="sig-prename descclassname"><span class="pre">pyegui.</span></span><span class="sig-name descname"><span class="pre">toggle_value</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">selected</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">text</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pyegui.toggle_value" title="Link to this definition"></a></dt>
+<dd><p>Acts like a checkbox, but looks like a selectable label.</p>
+<p>Example:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">data</span> <span class="o">=</span> <span class="n">Bool</span><span class="p">(</span><span class="n">false</span><span class="p">)</span>
+<span class="c1"># inside update_func</span>
+<span class="n">toggle_value</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="s2">&quot;check me&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="pyegui.weak">
+<span class="sig-prename descclassname"><span class="pre">pyegui.</span></span><span class="sig-name descname"><span class="pre">weak</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">text</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pyegui.weak" title="Link to this definition"></a></dt>
+<dd><p>Show text that is weaker (fainter color).</p>
+<p>Example:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">weak</span><span class="p">(</span><span class="s2">&quot;hello&quot;</span><span class="p">)</span> 
+</pre></div>
+</div>
+</dd></dl>
+
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="../examlpes.html" class="btn btn-neutral float-left" title="Examples" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="context.html" class="btn btn-neutral float-right" title="Context" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2026, GachiLord.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

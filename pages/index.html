@@ -1,0 +1,260 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="./">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>pyegui &mdash; pyegui  documentation</title>
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=9edc463e" />
+
+  
+      <script src="_static/jquery.js?v=5d32c60e"></script>
+      <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="_static/documentation_options.js?v=5929fcd5"></script>
+      <script src="_static/doctools.js?v=fd6eb6e6"></script>
+      <script src="_static/sphinx_highlight.js?v=6ffebe34"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="How to" href="guides.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="#" class="icon icon-home">
+            pyegui
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="guides.html">How to</a></li>
+<li class="toctree-l1"><a class="reference internal" href="examlpes.html">Examples</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">API reference:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="module/ui.html">UI functions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="module/context.html">Context</a></li>
+<li class="toctree-l1"><a class="reference internal" href="module/widgets.html">Widgets</a></li>
+<li class="toctree-l1"><a class="reference internal" href="module/helpers.html">Helpers</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="#">pyegui</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="#" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">pyegui</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="_sources/index.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="pyegui">
+<h1>pyegui<a class="headerlink" href="#pyegui" title="Link to this heading"></a></h1>
+<p><strong>pyegui</strong> is a native extenstion for Python that provides bindings for
+Rust immediate mode GUI library
+<a class="reference external" href="https://github.com/emilk/egui">egui</a>.</p>
+<section id="example">
+<h2>Example<a class="headerlink" href="#example" title="Link to this heading"></a></h2>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">pyegui</span><span class="w"> </span><span class="kn">import</span> <span class="o">*</span>
+
+<span class="n">name</span> <span class="o">=</span> <span class="n">Str</span><span class="p">(</span><span class="s2">&quot;Van&quot;</span><span class="p">)</span>
+<span class="n">age</span> <span class="o">=</span> <span class="n">Int</span><span class="p">(</span><span class="mi">24</span><span class="p">)</span>
+
+<span class="k">def</span><span class="w"> </span><span class="nf">update_func</span><span class="p">(</span><span class="n">ctx</span><span class="p">):</span>
+  <span class="n">heading</span><span class="p">(</span><span class="s2">&quot;My egui Application&quot;</span><span class="p">)</span>
+  <span class="n">text_edit_singleline</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">hint_text</span><span class="o">=</span><span class="s2">&quot;Your name&quot;</span><span class="p">)</span>
+  <span class="n">slider_int</span><span class="p">(</span><span class="n">age</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">150</span><span class="p">,</span> <span class="s2">&quot;age&quot;</span><span class="p">)</span>
+
+  <span class="k">if</span> <span class="n">button_clicked</span><span class="p">(</span><span class="s2">&quot;Increment&quot;</span><span class="p">):</span>
+    <span class="n">age</span><span class="o">.</span><span class="n">value</span> <span class="o">+=</span> <span class="mi">1</span>
+
+  <span class="n">heading</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Hello &#39;</span><span class="si">{</span><span class="n">name</span><span class="o">.</span><span class="n">value</span><span class="si">}</span><span class="s2">&#39;, age </span><span class="si">{</span><span class="n">age</span><span class="o">.</span><span class="n">value</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+  <span class="n">image</span><span class="p">(</span><span class="s2">&quot;file://image.png&quot;</span><span class="p">,</span> <span class="n">max_width</span><span class="o">=</span><span class="mi">350</span><span class="p">,</span> <span class="n">max_height</span><span class="o">=</span><span class="mi">250</span><span class="p">)</span>
+
+<span class="n">run_native</span><span class="p">(</span><span class="s2">&quot;My pyegui Application&quot;</span><span class="p">,</span> <span class="n">update_func</span><span class="p">)</span>
+</pre></div>
+</div>
+<p><img alt="example 1" src="https://github.com/GachiLord/pyegui/raw/main/example1.jpeg" /> <img alt="example 2" src="https://github.com/GachiLord/pyegui/raw/main/example2.jpeg" /></p>
+</section>
+<section id="features">
+<h2>Features<a class="headerlink" href="#features" title="Link to this heading"></a></h2>
+<p><strong>pyegui</strong> tries to be as close as possible to the original egui API,
+but with the focus on simplicity and usability. Callbacks were removed
+where possible to accomplish more smooth expirience in Python.</p>
+<ul class="simple">
+<li><p>Light and Dark themes(defaults to the system’s)</p></li>
+<li><p>Built-in latin and cyrillic alphabets. You can load any font you want
+with <code class="docutils literal notranslate"><span class="pre">ctx.set_font</span></code> function</p></li>
+<li><p>Images(png and jpeg)</p></li>
+<li><p>Date picker</p></li>
+<li><p>RBG color picker</p></li>
+<li><p>Text fields, radio buttons, buttons, code, progress bar etc.</p></li>
+<li><p>No dependencies which destroy you project when you distribute it. Just
+pure giant Rust binary</p></li>
+</ul>
+<p>Full list of implemented features is available
+<a class="reference external" href="https://github.com/GachiLord/pyegui/blob/main/TODO.md">here</a></p>
+</section>
+<section id="install">
+<h2>Install<a class="headerlink" href="#install" title="Link to this heading"></a></h2>
+<p>Prebuilt binaries are provided for Linux and Windows. On other platforms
+pip will build wheel for your OS. In this case you’ll need Rust compiler
+and <a class="reference external" href="https://github.com/PyO3/maturin">maturin</a></p>
+<p>Install from pypi</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>pip<span class="w"> </span>install<span class="w"> </span>pyegui
+</pre></div>
+</div>
+<p>Install from source</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>git<span class="w"> </span>clone<span class="w"> </span>https://github.com/gachilord/pyegui
+pip<span class="w"> </span>install<span class="w"> </span>&lt;path<span class="w"> </span>to<span class="w"> </span>pyegui&gt;
+</pre></div>
+</div>
+</section>
+<section id="usage">
+<h2>Usage<a class="headerlink" href="#usage" title="Link to this heading"></a></h2>
+<p>This is how you write a “hello world” app.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">pyegui</span><span class="w"> </span><span class="kn">import</span> <span class="o">*</span>
+
+<span class="k">def</span><span class="w"> </span><span class="nf">update_func</span><span class="p">(</span><span class="n">ctx</span><span class="p">):</span>
+  <span class="c1"># draw UI here</span>
+  <span class="n">heading</span><span class="p">(</span><span class="s2">&quot;Hello, World!&quot;</span><span class="p">)</span>
+
+<span class="n">run_native</span><span class="p">(</span><span class="s2">&quot;Example app&quot;</span><span class="p">,</span> <span class="n">update_func</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>You can find more examples in this
+<a class="reference external" href="https://github.com/GachiLord/pyegui/tree/main/examples">folder</a>.
+Also Python’s <code class="docutils literal notranslate"><span class="pre">help(pyegui.some_function)</span></code> will be quite
+effective(there are examples for every function). Read the source code
+of this binding and the original
+<a class="reference external" href="https://github.com/emilk/egui">library</a>.</p>
+<section id="update-functions">
+<h3>Update functions<a class="headerlink" href="#update-functions" title="Link to this heading"></a></h3>
+<p><strong>pyegui</strong> has a notion of update functions which the library calls to
+draw your UI.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">def</span><span class="w"> </span><span class="nf">update_func</span><span class="p">():</span>
+  <span class="c1"># you can place here any widget</span>
+  <span class="n">heading</span><span class="p">(</span><span class="s2">&quot;I&#39;m a heading&quot;</span><span class="p">)</span>
+  <span class="c1"># some widgets are interactive</span>
+  <span class="k">if</span> <span class="n">button_clicked</span><span class="p">(</span><span class="s2">&quot;I&#39;m a clickable button&quot;</span><span class="p">):</span>
+    <span class="c1"># you can update state from here or show another widget</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Clicked&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>The top level update function has the Context object that controls
+global aspects of your app(e.g fonts and theme).</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">def</span><span class="w"> </span><span class="nf">update_func</span><span class="p">(</span><span class="n">ctx</span><span class="p">):</span>
+  <span class="n">ctx</span><span class="o">.</span><span class="n">set_light_theme</span><span class="p">()</span>
+  <span class="n">heading</span><span class="p">(</span><span class="s2">&quot;Using light theme even if system&#39;s is dark&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Update functions may be nested. Such functions create a new UI scope
+that can have different styles and befaviour.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">def</span><span class="w"> </span><span class="nf">update_func</span><span class="p">(</span><span class="n">ctx</span><span class="p">):</span>
+  <span class="c1"># define update_func</span>
+  <span class="k">def</span><span class="w"> </span><span class="nf">nested</span><span class="p">():</span>
+    <span class="n">label</span><span class="p">(</span><span class="s2">&quot;I&#39;m a label inside nested update function&quot;</span><span class="p">)</span>
+    <span class="n">label</span><span class="p">(</span><span class="s2">&quot;New label&quot;</span><span class="p">)</span>
+    <span class="n">disable</span><span class="p">()</span> <span class="c1"># this function will disable all further widgets in the scope</span>
+    <span class="k">if</span> <span class="n">button_clicked</span><span class="p">(</span><span class="s2">&quot;You can&#39;t click me&quot;</span><span class="p">):</span>
+      <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Unreachable&quot;</span><span class="p">)</span>
+  <span class="c1"># all the widgets inside &#39;nested&#39; will be centered vertically</span>
+  <span class="n">horizontal_centered</span><span class="p">(</span><span class="n">nested</span><span class="p">)</span>
+  <span class="c1"># this widget won&#39;t be disabled though it goes after &#39;disable()&#39;</span>
+  <span class="k">if</span> <span class="n">button_clicked</span><span class="p">(</span><span class="s2">&quot;You can click me&quot;</span><span class="p">):</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Clicked&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</section>
+<section id="variables">
+<h3>Variables<a class="headerlink" href="#variables" title="Link to this heading"></a></h3>
+<p>Many widgets require access to a state via a reference, which can’t be
+done for integers, floats and strings in Python. That’s why such helper
+classes as Str, Bool, Int, Float, RGB and Date exist.</p>
+<p>They are essentially the following:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Example for bool type</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">Bool</span><span class="p">:</span>
+  <span class="n">value</span> <span class="o">=</span> <span class="kc">False</span>
+</pre></div>
+</div>
+<p>These classes can be used to draw UI or to store user input. You have to
+create them outside of update functions.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">data</span> <span class="o">=</span> <span class="n">Bool</span><span class="p">(</span><span class="kc">False</span><span class="p">)</span>
+
+<span class="k">def</span><span class="w"> </span><span class="nf">update_func</span><span class="p">():</span>
+  <span class="n">heading</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Value of the data is </span><span class="si">{</span><span class="n">data</span><span class="o">.</span><span class="n">value</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+  <span class="c1"># button will be shown only if the checkbox is checked</span>
+  <span class="k">if</span> <span class="n">data</span><span class="o">.</span><span class="n">value</span> <span class="ow">and</span> <span class="n">button_clicked</span><span class="p">(</span><span class="s2">&quot;set to False&quot;</span><span class="p">):</span>
+    <span class="c1"># hiding the button</span>
+    <span class="n">data</span><span class="o">.</span><span class="n">value</span> <span class="o">=</span> <span class="kc">False</span>
+  <span class="n">checkbox</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="s2">&quot;Check me&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+<div class="toctree-wrapper compound">
+</div>
+<div class="toctree-wrapper compound">
+</div>
+</section>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="guides.html" class="btn btn-neutral float-right" title="How to" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2026, GachiLord.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>
