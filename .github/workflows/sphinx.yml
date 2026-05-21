@@ -6,7 +6,7 @@ jobs:
   # Build job
   build:
     # Specify runner +  build & upload the static files as an artifact
-    runs-on: python:3.14-slim
+    image: python:3.14-slim
     steps:
       - name: Build static files
         id: build
