@@ -25,6 +25,7 @@ jobs:
   # Deployment job
   deploy:
     permissions:
+      id-token: write
       contents: write
     environment:
       name: github-pages
