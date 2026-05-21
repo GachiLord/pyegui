@@ -1,0 +1,33 @@
+name: "Sphinx: Render docs"
+
+on: push
+
+jobs:
+  # Build job
+  build:
+    # Specify runner +  build & upload the static files as an artifact
+    runs-on: python:3.14-slim
+    steps:
+      - name: Build static files
+        id: build
+        run: |
+          pip install sphinx sphinx-rtd-theme pyegui
+          sphinx-build -v ./docs/ ./docs/.build
+
+      - name: Upload static files as artifact
+        id: deployment
+        uses: actions/upload-pages-artifact@v3 # or specific "vX.X.X" version tag for this action
+        with:
+          path: docs/.build
+
+  # Deployment job
+  deploy:
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    runs-on: ubuntu-latest
+    needs: build
+    steps:
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4

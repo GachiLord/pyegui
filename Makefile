@@ -19,7 +19,7 @@ debug:
 
 doc: develop
 	rm ./docs -rf
-	.venv/bin/sphinx-build -v ./docsrc/ ./docs
+	.venv/bin/sphinx-build -v ./docs/ ./docs/.build
 
 develop:
 	.venv/bin/maturin develop
