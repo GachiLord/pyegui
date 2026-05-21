@@ -7,11 +7,13 @@ jobs:
   build:
     # Specify runner +  build & upload the static files as an artifact
     runs-on: ubuntu-latest
-    image: python:3.14-slim
     steps:
       - name: Build static files
-        id: build
-        run: |
+      - uses: actions/checkout@v6
+      - uses: actions/setup-python@v6
+        with:
+          python-version: '3.13'
+      - run: |
           pip install sphinx sphinx-rtd-theme pyegui
           sphinx-build -v ./docs/ ./docs/.build
 
