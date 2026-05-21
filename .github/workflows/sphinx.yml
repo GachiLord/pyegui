@@ -8,7 +8,6 @@ jobs:
     # Specify runner +  build & upload the static files as an artifact
     runs-on: ubuntu-latest
     steps:
-      - name: Build static files
       - uses: actions/checkout@v6
       - uses: actions/setup-python@v6
         with:
