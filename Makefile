@@ -18,9 +18,8 @@ debug:
 	.venv/bin/python debug.py
 
 doc: develop
-	rm ./docs/_build/ -rf
-	mkdir -p pages
-	.venv/bin/sphinx-build -v ./docs/ ./pages
+	rm ./docs -rf
+	.venv/bin/sphinx-build -v ./docsrc/ ./docs
 
 develop:
 	.venv/bin/maturin develop
