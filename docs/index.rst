@@ -9,6 +9,7 @@
    :hidden:
 
    guides
+   examlpes
 
 .. toctree::
    :caption: API reference:

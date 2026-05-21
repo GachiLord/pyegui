@@ -261,13 +261,13 @@ impl eframe::App for PyeguiApp<'_> {
 
       egui::CentralPanel::default().show(ctx, |ui| {
 
-				debug!("Getting ui stack pointer");
+        debug!("Getting ui stack pointer");
         let ui_stack = UI.as_mut().expect(UI_PTR_NULL_ERR);
 
-				debug!("Push UI");
+        debug!("Push UI");
         ui_stack.push(&raw mut *ui);
 
-				debug!("Execute update_func");
+        debug!("Execute update_func");
 
         Python::with_gil(|py| {
           if let Err(err) = self.update_func.call1((ctx_r,)) {
@@ -275,11 +275,11 @@ impl eframe::App for PyeguiApp<'_> {
           }
         });
 
-				debug!("Executed update_func");
+        debug!("Executed update_func");
 
         ui_stack.pop().expect(UI_STACK_ERR);
 
-				debug!("Pop UI");
+        debug!("Pop UI");
       });
 
     }
@@ -337,11 +337,11 @@ unsafe fn run_native(
     update_func: Bound<'_, PyAny>,
     kwargs: Option<&Bound<'_, PyDict>>,
 ) -> PyResult<()> {
-	debug!("Trying to get the app lock");
+  debug!("Trying to get the app lock");
   // ensure thread safety 
   let _lock = APP_MUTEX.try_lock().map_err(|_| PyRuntimeError::new_err(APP_MUTEX_ERR))?;
   // init UI stack
-	debug!("Initialzing UI stack");
+  debug!("Initialzing UI stack");
   let mut ui_stack = Vec::with_capacity(32);
   UI = &raw mut *&mut ui_stack;
   // parse kwargs
@@ -388,10 +388,10 @@ unsafe fn run_native(
 
     if let Some(icon_path) = kwargs.get_item("icon_path")? {
       let path = icon_path.downcast::<PyString>()?.extract::<String>()?;
-			let buf = fs::read(path)?;
+      let buf = fs::read(path)?;
 
-			let icon_data = eframe::icon_data::from_png_bytes(&buf)
-				.map_err(|e| PyOSError::new_err(format!("Failed to decode png file: {}", e)))?;
+      let icon_data = eframe::icon_data::from_png_bytes(&buf)
+        .map_err(|e| PyOSError::new_err(format!("Failed to decode png file: {}", e)))?;
       viewport = viewport.with_icon(icon_data);
     }
   }
@@ -400,7 +400,7 @@ unsafe fn run_native(
     viewport,
     ..eframe::NativeOptions::default()
   };
-	debug!("Creating a window");
+  debug!("Creating a window");
   // create a window
   let result = eframe::run_native(
         app_name,
@@ -1153,7 +1153,7 @@ unsafe fn add_space(amount: f32) -> PyResult<()> {
 
 #[pymodule]
 fn pyegui(m: &Bound<'_, PyModule>) -> PyResult<()> {
-	pyo3_log::init();
+  pyo3_log::init();
   // classes
   m.add_class::<Str>()?;
   m.add_class::<Bool>()?;
