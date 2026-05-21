@@ -68,3 +68,17 @@ Example app:
 .. image:: _static/themes.png
    :alt: themes screenshot
 
+Center elements vertically
+-----------------------------
+
+.. literalinclude:: ../guides/centerhor.py
+   :language: python
+   :linenos:
+
+.. image:: _static/centerhor.png
+   :alt: vertically centered label screenshot
+
+Center elements horizontally 
+-----------------------------
+
+At this moment you can't. Sorry
