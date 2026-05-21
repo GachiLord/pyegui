@@ -214,6 +214,12 @@ impl Float {
 }
 
 
+/// Rgb color picker
+///
+/// Usage::
+///
+///     color_rgb = RGB(69, 69, 69)
+///     color_edit_button_rgb(color_rgb)
 #[pyclass]
 struct RGB {
   #[pyo3(get, set)]
@@ -232,6 +238,12 @@ impl RGB {
     }
 }
 
+/// Date picker
+///
+/// Usage::
+///
+///     date = Date(datetime.datetime.now())
+///     date_picker_button(date)
 #[pyclass]
 struct Date {
     #[pyo3(get, set)]
