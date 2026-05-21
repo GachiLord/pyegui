@@ -24,6 +24,8 @@ jobs:
 
   # Deployment job
   deploy:
+    permissions:
+      contents: write
     environment:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
