@@ -9,20 +9,12 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v6
-      - name: Build wheels
-        uses: PyO3/maturin-action@v1
-        with:
-          target: ${{ matrix.platform.target }}
-          args: --release --out . --find-interpreter
-          sccache: ${{ !startsWith(github.ref, 'refs/tags/') }}
-          manylinux: auto
       - name: Build static files
         uses: actions/setup-python@v6
         with:
           python-version: '3.13'
       - run: |
-          pip install ./pyegui*.whl
-          pip install sphinx sphinx-rtd-theme
+          pip install sphinx sphinx-rtd-theme pyegui
           sphinx-build -v ./docs/ ./docs/.build
       - name: Upload static files as artifact
         id: deployment
