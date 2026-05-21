@@ -16,7 +16,6 @@ jobs:
       - run: |
           pip install sphinx sphinx-rtd-theme pyegui
           sphinx-build -v ./docs/ ./docs/.build
-
       - name: Upload static files as artifact
         id: deployment
         uses: actions/upload-pages-artifact@v3 # or specific "vX.X.X" version tag for this action
