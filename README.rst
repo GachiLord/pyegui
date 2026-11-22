@@ -192,3 +192,17 @@ create them outside of update functions.
 
 .. |example 1| image:: https://github.com/GachiLord/pyegui/raw/main/example1.jpeg
 .. |example 2| image:: https://github.com/GachiLord/pyegui/raw/main/example2.jpeg
+
+
+How to build
+~~~~~~~~~~~~
+
+.. code:: bash
+
+  # init venv
+  make venv
+  # build the library
+  make develop
+  # run script with installed pyegui
+  .venv/bin/python examples/hello_world.py
+
