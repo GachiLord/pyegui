@@ -59,6 +59,15 @@ Theme is changed using these methods:
   ctx.set_dark_theme()
   ctx.set_system_theme()
 
+Set cursor icon
+-----------------
+
+Set the cursor icon.
+
+.. code-block:: python
+
+  ctx.set_cursor_icon(CursorIcon.Wait)
+
 Example app:
 
 .. literalinclude:: ../guides/themes.py

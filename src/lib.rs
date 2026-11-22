@@ -27,6 +27,88 @@ static UI_CALL_OUTSIDE_UPDATE_FUNC: &'static str = "UI functions should be calle
 
 // classes
 
+#[pyclass]
+#[derive(Clone)]
+pub enum CursorIcon {
+    Default,
+    None,
+    ContextMenu,
+    Help,
+    PointingHand,
+    Progress,
+    Wait,
+    Cell,
+    Crosshair,
+    Text,
+    VerticalText,
+    Alias,
+    Copy,
+    Move,
+    NoDrop,
+    NotAllowed,
+    Grab,
+    Grabbing,
+    AllScroll,
+    ResizeHorizontal,
+    ResizeNeSw,
+    ResizeNwSe,
+    ResizeVertical,
+    ResizeEast,
+    ResizeSouthEast,
+    ResizeSouth,
+    ResizeSouthWest,
+    ResizeWest,
+    ResizeNorthWest,
+    ResizeNorth,
+    ResizeNorthEast,
+    ResizeColumn,
+    ResizeRow,
+    ZoomIn,
+    ZoomOut,
+}
+
+impl From<CursorIcon> for egui::CursorIcon {
+    fn from(cursor: CursorIcon) -> Self {
+        match cursor {
+            CursorIcon::Default => Self::Default,
+            CursorIcon::None => Self::None,
+            CursorIcon::ContextMenu => Self::ContextMenu,
+            CursorIcon::Help => Self::Help,
+            CursorIcon::PointingHand => Self::PointingHand,
+            CursorIcon::Progress => Self::Progress,
+            CursorIcon::Wait => Self::Wait,
+            CursorIcon::Cell => Self::Cell,
+            CursorIcon::Crosshair => Self::Crosshair,
+            CursorIcon::Text => Self::Text,
+            CursorIcon::VerticalText => Self::VerticalText,
+            CursorIcon::Alias => Self::Alias,
+            CursorIcon::Copy => Self::Copy,
+            CursorIcon::Move => Self::Move,
+            CursorIcon::NoDrop => Self::NoDrop,
+            CursorIcon::NotAllowed => Self::NotAllowed,
+            CursorIcon::Grab => Self::Grab,
+            CursorIcon::Grabbing => Self::Grabbing,
+            CursorIcon::AllScroll => Self::AllScroll,
+            CursorIcon::ResizeHorizontal => Self::ResizeHorizontal,
+            CursorIcon::ResizeNeSw => Self::ResizeNeSw,
+            CursorIcon::ResizeNwSe => Self::ResizeNwSe,
+            CursorIcon::ResizeVertical => Self::ResizeVertical,
+            CursorIcon::ResizeEast => Self::ResizeEast,
+            CursorIcon::ResizeSouthEast => Self::ResizeSouthEast,
+            CursorIcon::ResizeSouth => Self::ResizeSouth,
+            CursorIcon::ResizeSouthWest => Self::ResizeSouthWest,
+            CursorIcon::ResizeWest => Self::ResizeWest,
+            CursorIcon::ResizeNorthWest => Self::ResizeNorthWest,
+            CursorIcon::ResizeNorth => Self::ResizeNorth,
+            CursorIcon::ResizeNorthEast => Self::ResizeNorthEast,
+            CursorIcon::ResizeColumn => Self::ResizeColumn,
+            CursorIcon::ResizeRow => Self::ResizeRow,
+            CursorIcon::ZoomIn => Self::ZoomIn,
+            CursorIcon::ZoomOut => Self::ZoomOut,
+        }
+    }
+}
+
 /// Context object that controls global aspects of your app
 ///
 /// Usage::
@@ -118,6 +200,82 @@ impl Context {
     /// Copy the given text to the system clipboard.
     fn copy_text(&self, text: String) {
         self.0.copy_text(text);
+    }
+
+    /// Set the cursor icon.
+    /// Possible values:
+    ///
+    /// Default
+    ///
+    /// None
+    ///
+    /// ContextMenu
+    ///
+    /// Help
+    ///
+    /// PointingHand
+    ///
+    /// Progress
+    ///
+    /// Wait
+    ///
+    /// Cell
+    ///
+    /// Crosshair
+    ///
+    /// Text
+    ///
+    /// VerticalText
+    ///
+    /// Alias
+    ///
+    /// Copy
+    ///
+    /// Move
+    ///
+    /// NoDrop
+    ///
+    /// NotAllowed
+    ///
+    /// Grab
+    ///
+    /// Grabbing
+    ///
+    /// AllScroll
+    ///
+    /// ResizeHorizontal
+    ///
+    /// ResizeNeSw
+    ///
+    /// ResizeNwSe
+    ///
+    /// ResizeVertical
+    ///
+    /// ResizeEast
+    ///
+    /// ResizeSouthEast
+    ///
+    /// ResizeSouth
+    ///
+    /// ResizeSouthWest
+    ///
+    /// ResizeWest
+    ///
+    /// ResizeNorthWest
+    ///
+    /// ResizeNorth
+    ///
+    /// ResizeNorthEast
+    ///
+    /// ResizeColumn
+    ///
+    /// ResizeRow
+    ///
+    /// ZoomIn
+    ///
+    /// ZoomOut
+    fn set_cursor_icon(&self, cursor_icon: CursorIcon) {
+        self.0.set_cursor_icon(egui::CursorIcon::from(cursor_icon))
     }
 }
 
@@ -1555,6 +1713,7 @@ fn pyegui(m: &Bound<'_, PyModule>) -> PyResult<()> {
     m.add_class::<LayoutType>()?;
     m.add_class::<Scope>()?;
     m.add_class::<Group>()?;
+    m.add_class::<CursorIcon>()?;
     // functions
     m.add_function(wrap_pyfunction!(run_native, m)?)?;
     m.add_function(wrap_pyfunction!(heading, m)?)?;

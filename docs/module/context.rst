@@ -10,4 +10,5 @@ Context
 .. automethod:: pyegui.Context.set_font
 .. automethod:: pyegui.Context.open_url
 .. automethod:: pyegui.Context.copy_text
+.. automethod:: pyegui.Context.set_cursor_icon
 
