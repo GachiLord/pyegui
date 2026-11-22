@@ -12,6 +12,7 @@ use pyo3::{
 };
 use std::sync::{Arc, Mutex};
 use std::{fs, ptr};
+use std::time::Duration;
 
 // state
 
@@ -200,6 +201,30 @@ impl Context {
     /// Copy the given text to the system clipboard.
     fn copy_text(&self, text: String) {
         self.0.copy_text(text);
+    }
+
+    /// Call this if there is need to repaint the UI, i.e. if you are showing an animation.
+    /// If this is called at least once in a frame, then there will be another frame right after this. Call as many times as you wish, only one repaint will be issued.
+    fn request_repaint(&self) {
+        self.0.request_repaint();
+    }
+
+    /// Request repaint after at most the specified duration elapses.
+    /// 
+    /// The backend can chose to repaint sooner, for instance if some other code called this method with a lower duration, or if new events arrived.
+    /// 
+    /// The function can be multiple times, but only the smallest duration will be considered. So, if the function is called two times with 1 second and 2 seconds, egui will repaint after 1 second
+    /// 
+    /// This is primarily useful for applications who would like to save battery by avoiding wasted redraws when the app is not in focus. But sometimes the GUI of the app might become stale and outdated if it is not updated for too long.
+    /// 
+    /// Let’s say, something like a stopwatch widget that displays the time in seconds. You would waste resources repainting multiple times within the same second (when you have no input), just calculate the difference of duration between current time and next second change, and call this function, to make sure that you are displaying the latest updated time, but not wasting resources on needless repaints within the same second.
+    /// 
+    /// Quirk:
+    /// Duration begins at the next frame. Let’s say for example that it’s a very inefficient app and takes 500 milliseconds per frame at 2 fps. The widget / user might want a repaint in next 500 milliseconds. Now, app takes 1000 ms per frame (1 fps) because the backend event timeout takes 500 milliseconds AFTER the vsync swap buffer. So, it’s not that we are requesting repaint within X duration. We are rather timing out during app idle time where we are not receiving any new input events.
+    /// 
+    /// This repaints the current viewport.
+    fn request_repaint_after(&self, duration: Duration) {
+        self.0.request_repaint_after(duration);
     }
 
     /// Set the cursor icon.

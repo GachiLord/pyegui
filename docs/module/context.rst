@@ -11,4 +11,5 @@ Context
 .. automethod:: pyegui.Context.open_url
 .. automethod:: pyegui.Context.copy_text
 .. automethod:: pyegui.Context.set_cursor_icon
-
+.. automethod:: pyegui.Context.request_repaint
+.. automethod:: pyegui.Context.request_repaint_after

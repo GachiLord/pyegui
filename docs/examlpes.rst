@@ -41,6 +41,26 @@ python IDE
 .. image:: _static/python-ide.png
    :alt: python ide screenshot
 
+animation
+-------------
+
+.. literalinclude:: ../examples/animation.py
+   :language: python
+   :linenos:
+
+.. image:: _static/animation.gif
+   :alt: animation screenshot
+
+watch
+-------------
+
+.. literalinclude:: ../examples/watch.py
+   :language: python
+   :linenos:
+
+.. image:: _static/watch.gif
+   :alt: watch screenshot
+
 all widgets
 -------------
 
