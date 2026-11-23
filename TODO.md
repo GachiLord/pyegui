@@ -4,7 +4,7 @@
 * ~~add_enabled~~
 * ~~add_enabled_ui~~
 * add_sized?
-* add_space?
+* ~~add_space~~
 * add_visible?
 * advance_cursor_after_rect
 * allocate_at_least?
