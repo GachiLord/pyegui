@@ -1,6 +1,16 @@
 How to
 ===========
 
+Make font bigger
+------------------------
+
+.. literalinclude:: ../guides/font_size.py
+   :language: python
+   :linenos:
+
+.. image:: _static/font_size.png
+   :alt: big zoom_factor
+
 Copy text to clipboard
 ------------------------
 

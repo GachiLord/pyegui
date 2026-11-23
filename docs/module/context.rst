@@ -13,3 +13,9 @@ Context
 .. automethod:: pyegui.Context.set_cursor_icon
 .. automethod:: pyegui.Context.request_repaint
 .. automethod:: pyegui.Context.request_repaint_after
+.. autoattribute:: pyegui.Context.pixels_per_point
+.. automethod:: pyegui.Context.set_pixels_per_point
+.. autoattribute:: pyegui.Context.native_pixels_per_point
+.. autoattribute:: pyegui.Context.zoom_factor
+.. automethod:: pyegui.Context.set_zoom_factor
+

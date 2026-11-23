@@ -302,6 +302,48 @@ impl Context {
     fn set_cursor_icon(&self, cursor_icon: CursorIcon) {
         self.0.set_cursor_icon(egui::CursorIcon::from(cursor_icon))
     }
+
+    /// The number of physical pixels for each logical point.
+    /// 
+    /// This is calculated as zoom_factor * native_pixels_per_point
+    #[getter]
+    fn pixels_per_point(&self) -> f32 {
+        self.0.pixels_per_point()
+    }
+
+    /// Set the number of physical pixels for each logical point. Will become active at the start of the next pass.
+    /// 
+    /// This will actually translate to a call to set_zoom_factor.
+    fn set_pixels_per_point(&self, pixels_per_point: f32) {
+        self.0.set_pixels_per_point(pixels_per_point)
+    }
+
+    /// The number of physical pixels for each logical point on this monitor.
+    #[getter]
+    fn native_pixels_per_point(&self) -> Option<f32> {
+        self.0.native_pixels_per_point()
+    }
+
+    /// Global zoom factor of the UI.
+    /// 
+    /// This is used to calculate the pixels_per_point for the UI as pixels_per_point = zoom_factor * native_pixels_per_point.
+    /// 
+    /// The default is 1.0. Make larger to make everything larger.
+    #[getter]
+    fn zoom_factor(&self) -> f32 {
+        self.0.zoom_factor()
+    }
+
+    /// Sets zoom factor of the UI. Will become active at the start of the next pass.
+    /// 
+    /// Note that calling this will not update zoom_factor until the end of the pass.
+    /// 
+    /// This is used to calculate the pixels_per_point for the UI as pixels_per_point = zoom_fator * native_pixels_per_point.
+    /// 
+    /// The default is 1.0. Make larger to make everything larger.
+    fn set_zoom_factor(&self, zoom_factor: f32) {
+        self.0.set_zoom_factor(zoom_factor)
+    }
 }
 
 /// Str stores string value that can be referenced
