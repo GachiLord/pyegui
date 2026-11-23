@@ -110,6 +110,12 @@ impl From<CursorIcon> for egui::CursorIcon {
     }
 }
 
+#[pyclass]
+pub struct Pos2 {
+    pub x: f32,
+    pub y: f32,
+}
+
 /// Context object that controls global aspects of your app
 ///
 /// Usage::
@@ -343,6 +349,93 @@ impl Context {
     /// The default is 1.0. Make larger to make everything larger.
     fn set_zoom_factor(&self, zoom_factor: f32) {
         self.0.set_zoom_factor(zoom_factor)
+    }
+
+    /// Is the pointer (mouse/touch) over any egui area?
+    #[getter]
+    fn is_pointer_over_area(&self) -> bool {
+        self.0.is_pointer_over_area()
+    }
+
+    /// True if egui is currently interested in the pointer (mouse or touch).
+    /// 
+    /// Could be the pointer is hovering over a crate::Window or the user is dragging a widget. If false, the pointer is outside of any egui area and so you may be interested in what it is doing (e.g. controlling your game). Returns false if a drag started outside of egui and then moved over an egui area.
+    #[getter]
+    fn wants_pointer_input(&self) -> bool {
+        self.0.wants_pointer_input()
+    }
+
+    /// Is egui currently using the pointer position (e.g. dragging a slider)?
+    /// 
+    /// NOTE: this will return false if the pointer is just hovering over an egui area.
+    #[getter]
+    fn is_using_pointer(&self) -> bool {
+        self.0.is_using_pointer()
+    }
+
+    /// If true, egui is currently listening on text input.
+    #[getter]
+    fn wants_keyboard_input(&self) -> bool {
+        self.0.wants_keyboard_input()
+    }
+
+    /// Is an egui context menu open?
+    #[getter]
+    fn is_context_menu_open(&self) -> bool {
+        self.0.is_context_menu_open()
+    }
+
+    /// Latest reported pointer position.
+    /// 
+    /// When tapping a touch screen, this will be None.
+    ///
+    /// Usage::
+    ///     
+    ///     pos = ctx.pointer_latest_pos()
+    ///     print(pos.x, pos.y)
+    #[getter]
+    fn pointer_latest_pos(&self) -> Option<Pos2> {
+        let p = self.0.pointer_latest_pos();
+
+        Some(Pos2{
+            x: p?.x,
+            y: p?.y,
+        })
+    }
+
+
+    /// If it is a good idea to show a tooltip, where is pointer?
+    ///
+    /// Usage::
+    ///     
+    ///     pos = ctx.pointer_hover_pos()
+    ///     print(pos.x, pos.y)
+    #[getter]
+    fn pointer_hover_pos(&self) -> Option<Pos2> {
+        let p = self.0.pointer_latest_pos();
+
+        Some(Pos2{
+            x: p?.x,
+            y: p?.y,
+        })
+    }
+
+    /// If you detect a click or drag and wants to know where it happened, use this.
+    /// 
+    /// Latest position of the mouse, but ignoring any crate::Event::PointerGone if there were interactions this pass. When tapping a touch screen, this will be the location of the touch.
+    ///
+    /// Usage::
+    ///     
+    ///     pos = ctx.pointer_interact_pos()
+    ///     print(pos.x, pos.y)
+    #[getter]
+    fn pointer_interact_pos(&self) -> Option<Pos2> {
+        let p = self.0.pointer_interact_pos();
+
+        Some(Pos2{
+            x: p?.x,
+            y: p?.y,
+        })
     }
 }
 
@@ -1781,6 +1874,7 @@ fn pyegui(m: &Bound<'_, PyModule>) -> PyResult<()> {
     m.add_class::<Scope>()?;
     m.add_class::<Group>()?;
     m.add_class::<CursorIcon>()?;
+    m.add_class::<Pos2>()?;
     // functions
     m.add_function(wrap_pyfunction!(run_native, m)?)?;
     m.add_function(wrap_pyfunction!(heading, m)?)?;

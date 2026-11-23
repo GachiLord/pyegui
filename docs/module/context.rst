@@ -18,4 +18,14 @@ Context
 .. autoattribute:: pyegui.Context.native_pixels_per_point
 .. autoattribute:: pyegui.Context.zoom_factor
 .. automethod:: pyegui.Context.set_zoom_factor
+.. autoattribute:: pyegui.Context.is_pointer_over_area
+.. autoattribute:: pyegui.Context.wants_pointer_input
+.. autoattribute:: pyegui.Context.is_using_pointer
+.. autoattribute:: pyegui.Context.wants_keyboard_input
+.. autoattribute:: pyegui.Context.is_context_menu_open
+.. autoattribute:: pyegui.Context.pointer_latest_pos
+.. autoattribute:: pyegui.Context.pointer_hover_pos
+.. autoattribute:: pyegui.Context.pointer_interact_pos
+
+
 
