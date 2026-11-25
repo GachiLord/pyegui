@@ -26,7 +26,7 @@
 * ~~centered_and_justified~~
 * ~~checkbox~~
 * clip_rect
-* close_menu
+* ~~close_menu~~
 * ~~code~~
 * ~~code_editor~~
 * collapsing
@@ -82,9 +82,9 @@
 * max_rect
 * memory?
 * memory_mut?
-* menu_button
-* menu_image_button
-* menu_image_text_button
+* ~~menu_button~~
+* ~~menu_image_button~~
+* ~~menu_image_text_button~~
 * min_rect
 * min_size
 * monospace

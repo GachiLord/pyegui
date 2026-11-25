@@ -2029,6 +2029,79 @@ unsafe fn add_space(amount: f32) -> PyResult<()> {
     Ok(())
 }
 
+
+/// close_menu() -> None
+///
+/// Close the menu we are in (including submenus), if any.
+///
+/// Example::
+///
+///    def nested():
+///        if button_clicked("submenu button"):
+///            close_menu()
+///    menu_image_button("https://github.githubassets.com/favicons/favicon.svg", nested)
+#[pyfunction]
+unsafe fn close_menu() -> PyResult<()> {
+    let ui = current_ui(&UI)?;
+
+    ui.close_menu();
+    Ok(())
+}
+
+
+/// menu_button(title: str, update_fun: Callable[[Context], None]) -> None
+///
+/// Create a menu button that when clicked will show the given menu.
+/// 
+/// If called from within a menu this will instead create a button for a sub-menu.
+///
+/// Example::
+///
+///     menu_button("Submenu", lambda: button_clicked("submenu button"))
+#[pyfunction]
+unsafe fn menu_button(title: &str, update_fun: Bound<'_, PyAny>) -> PyResult<()> {
+    current_ui(&UI)?
+        .menu_button(title, |ui| run_nested_update_func(ui, update_fun))
+        .inner;
+
+    Ok(())
+}
+
+
+/// menu_image_button(image_path: str, update_fun: Callable[[Context], None]) -> None
+///
+///
+/// Example::
+///
+///     menu_image_button("https://github.githubassets.com/favicons/favicon.svg", lambda: button_clicked("submenu button"))
+#[pyfunction]
+unsafe fn menu_image_button(image_path: &str, update_fun: Bound<'_, PyAny>) -> PyResult<()> {
+    let icon_data = egui::Image::new(image_path);
+
+    current_ui(&UI)?
+        .menu_image_button(icon_data, |ui| run_nested_update_func(ui, update_fun))
+        .inner;
+
+    Ok(())
+}
+
+/// menu_image_text_button(image_path: str, title: str, update_fun: Callable[[Context], None]) -> None
+///
+///
+/// Example::
+///
+///     menu_image_text_button("https://github.githubassets.com/favicons/favicon.svg", "title", lambda: button_clicked("submenu button"))
+#[pyfunction]
+unsafe fn menu_image_text_button(image_path: &str, title: &str, update_fun: Bound<'_, PyAny>) -> PyResult<()> {
+    let icon_data = egui::Image::new(image_path);
+
+    current_ui(&UI)?
+        .menu_image_text_button(icon_data, title, |ui| run_nested_update_func(ui, update_fun))
+        .inner;
+
+    Ok(())
+}
+
 #[pymodule]
 mod pyegui {
     #[pymodule_export]
@@ -2160,4 +2233,12 @@ mod pyegui {
     use super::date_picker_button;
     #[pymodule_export]
     use super::add_space;
+    #[pymodule_export]
+    use super::close_menu;
+    #[pymodule_export]
+    use super::menu_button;
+    #[pymodule_export]
+    use super::menu_image_button;
+    #[pymodule_export]
+    use super::menu_image_text_button;
 }
