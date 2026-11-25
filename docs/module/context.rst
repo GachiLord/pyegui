@@ -1,6 +1,10 @@
 Context 
 ===================
 
+.. autoclass:: pyegui.Pos2
+.. autoattribute:: pyegui.Pos2.x
+.. autoattribute:: pyegui.Pos2.y
+
 .. autoclass:: pyegui.Context
 .. autoattribute:: pyegui.Context.is_light_theme
 .. autoattribute:: pyegui.Context.is_dark_theme

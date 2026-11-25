@@ -68,7 +68,6 @@ def control_panel():
                     APP_STATE.set_pwd(p)
 
 def main_view(ctx):
-
     control_panel()
     scroll_area_vertical(files_view)
 

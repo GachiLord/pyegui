@@ -28,8 +28,9 @@ static UI_CALL_OUTSIDE_UPDATE_FUNC: &'static str = "UI functions should be calle
 
 // classes
 
-#[pyclass]
-#[derive(Clone)]
+#[pyclass(eq, eq_int)]
+#[derive(PartialEq)]
+#[repr(i32)]
 pub enum CursorIcon {
     Default,
     None,
@@ -68,8 +69,8 @@ pub enum CursorIcon {
     ZoomOut,
 }
 
-impl From<CursorIcon> for egui::CursorIcon {
-    fn from(cursor: CursorIcon) -> Self {
+impl From<&CursorIcon> for egui::CursorIcon {
+    fn from(cursor: &CursorIcon) -> Self {
         match cursor {
             CursorIcon::Default => Self::Default,
             CursorIcon::None => Self::None,
@@ -112,8 +113,12 @@ impl From<CursorIcon> for egui::CursorIcon {
 
 #[pyclass]
 pub struct Pos2 {
-    pub x: f32,
-    pub y: f32,
+    /// x() -> float
+    #[pyo3(get, set)]
+    x: f32,
+    /// y() -> float
+    #[pyo3(get, set)]
+    y: f32,
 }
 
 /// Context object that controls global aspects of your app
@@ -130,33 +135,48 @@ struct Context(egui::Context);
 
 #[pymethods]
 impl Context {
+    /// is_light_theme() -> bool
+    ///
     /// True when theme is dark
     #[getter]
     fn is_light_theme(&self) -> bool {
         self.0.theme() == egui::Theme::Light
     }
 
+    /// is_dark_theme() -> bool
+    ///
     /// True when theme is dark
     #[getter]
     fn is_dark_theme(&self) -> bool {
         self.0.theme() == egui::Theme::Dark
     }
 
+    /// set_light_theme() -> None
+    ///
     /// Sets light theme. Default is system's
+    #[pyo3(text_signature = "($self)")]
     fn set_light_theme(&self) {
         self.0.set_theme(egui::ThemePreference::Light);
     }
 
+    /// set_dark_theme() -> None
+    ///
     /// Sets dark theme. Default is system's
+    #[pyo3(text_signature = "($self)")]
     fn set_dark_theme(&self) {
         self.0.set_theme(egui::ThemePreference::Dark);
     }
 
+    /// set_system_theme() -> None
+    ///
     /// Sets system's theme if it has been changed.
+    #[pyo3(text_signature = "($self)")]
     fn set_system_theme(&self) {
         self.0.set_theme(egui::ThemePreference::System);
     }
 
+    /// set_font(source: str) -> None
+    ///
     /// Tell egui which fonts to use.
     ///
     /// The default egui fonts only support latin and cyrillic alphabets, but you can call this to install additional fonts that support e.g. Japanese characters.
@@ -168,6 +188,7 @@ impl Context {
     ///   def update_func(ctx):
     ///     ctx.set_font("NotoSansJP-VariableFont_wght.ttf")
     ///     heading("天気の子")
+    #[pyo3(signature = (source: "str") -> "None")]
     fn set_font(&self, source: String) -> PyResult<()> {
         let buf = fs::read(&source).map_err(|e| {
             eprintln!("Cannot open '{}': {}", source, e.to_string());
@@ -199,22 +220,33 @@ impl Context {
         Ok(())
     }
 
+    /// open_url(url: str) -> None
+    ///
     /// Open an URL in a browser.
+    #[pyo3(text_signature = "($self, url)")]
     fn open_url(&self, url: &str) {
         self.0.open_url(egui::OpenUrl::new_tab(url));
     }
 
+    /// copy_text(text: str) -> None
+    ///
     /// Copy the given text to the system clipboard.
+    #[pyo3(text_signature = "($self, text)")]
     fn copy_text(&self, text: String) {
         self.0.copy_text(text);
     }
 
+    /// request_repaint() -> None
+    ///
     /// Call this if there is need to repaint the UI, i.e. if you are showing an animation.
     /// If this is called at least once in a frame, then there will be another frame right after this. Call as many times as you wish, only one repaint will be issued.
+    #[pyo3(text_signature = "($self)")]
     fn request_repaint(&self) {
         self.0.request_repaint();
     }
 
+    /// request_repaint_after(duration: datetime.timedelta) -> None
+    ///
     /// Request repaint after at most the specified duration elapses.
     /// 
     /// The backend can chose to repaint sooner, for instance if some other code called this method with a lower duration, or if new events arrived.
@@ -229,10 +261,13 @@ impl Context {
     /// Duration begins at the next frame. Let’s say for example that it’s a very inefficient app and takes 500 milliseconds per frame at 2 fps. The widget / user might want a repaint in next 500 milliseconds. Now, app takes 1000 ms per frame (1 fps) because the backend event timeout takes 500 milliseconds AFTER the vsync swap buffer. So, it’s not that we are requesting repaint within X duration. We are rather timing out during app idle time where we are not receiving any new input events.
     /// 
     /// This repaints the current viewport.
+    #[pyo3(text_signature = "($self, duration)")]
     fn request_repaint_after(&self, duration: Duration) {
         self.0.request_repaint_after(duration);
     }
 
+    /// set_cursor_icon(cursor_icon: int) -> None
+    ///
     /// Set the cursor icon.
     /// Possible values:
     ///
@@ -305,10 +340,14 @@ impl Context {
     /// ZoomIn
     ///
     /// ZoomOut
-    fn set_cursor_icon(&self, cursor_icon: CursorIcon) {
-        self.0.set_cursor_icon(egui::CursorIcon::from(cursor_icon))
+    #[pyo3(text_signature = "($self, cursor_icon)")]
+    fn set_cursor_icon(&self, cursor_icon: &CursorIcon) {
+        self.0
+            .set_cursor_icon(egui::CursorIcon::from(cursor_icon))
     }
 
+    /// pixels_per_point() -> float
+    ///
     /// The number of physical pixels for each logical point.
     /// 
     /// This is calculated as zoom_factor * native_pixels_per_point
@@ -317,19 +356,26 @@ impl Context {
         self.0.pixels_per_point()
     }
 
+    /// set_pixels_per_point(pixels_per_point: float) -> None
+    ///
     /// Set the number of physical pixels for each logical point. Will become active at the start of the next pass.
     /// 
     /// This will actually translate to a call to set_zoom_factor.
+    #[pyo3(text_signature = "($self, pixels_per_point)")]
     fn set_pixels_per_point(&self, pixels_per_point: f32) {
         self.0.set_pixels_per_point(pixels_per_point)
     }
 
+    /// native_pixels_per_point() -> float | None
+    ///
     /// The number of physical pixels for each logical point on this monitor.
     #[getter]
     fn native_pixels_per_point(&self) -> Option<f32> {
         self.0.native_pixels_per_point()
     }
 
+    /// zoom_factor() -> float
+    ///
     /// Global zoom factor of the UI.
     /// 
     /// This is used to calculate the pixels_per_point for the UI as pixels_per_point = zoom_factor * native_pixels_per_point.
@@ -340,6 +386,8 @@ impl Context {
         self.0.zoom_factor()
     }
 
+    /// set_zoom_factor(zoom_factor: float) -> None
+    ///
     /// Sets zoom factor of the UI. Will become active at the start of the next pass.
     /// 
     /// Note that calling this will not update zoom_factor until the end of the pass.
@@ -351,12 +399,16 @@ impl Context {
         self.0.set_zoom_factor(zoom_factor)
     }
 
+    /// is_pointer_over_area() -> bool
+    ///
     /// Is the pointer (mouse/touch) over any egui area?
     #[getter]
     fn is_pointer_over_area(&self) -> bool {
         self.0.is_pointer_over_area()
     }
 
+    /// wants_pointer_input() -> bool
+    ///
     /// True if egui is currently interested in the pointer (mouse or touch).
     /// 
     /// Could be the pointer is hovering over a crate::Window or the user is dragging a widget. If false, the pointer is outside of any egui area and so you may be interested in what it is doing (e.g. controlling your game). Returns false if a drag started outside of egui and then moved over an egui area.
@@ -365,6 +417,8 @@ impl Context {
         self.0.wants_pointer_input()
     }
 
+    /// is_using_pointer() -> bool
+    ///
     /// Is egui currently using the pointer position (e.g. dragging a slider)?
     /// 
     /// NOTE: this will return false if the pointer is just hovering over an egui area.
@@ -373,18 +427,24 @@ impl Context {
         self.0.is_using_pointer()
     }
 
+    /// wants_keyboard_input() -> bool
+    ///
     /// If true, egui is currently listening on text input.
     #[getter]
     fn wants_keyboard_input(&self) -> bool {
         self.0.wants_keyboard_input()
     }
 
+    /// is_context_menu_open() -> bool
+    ///
     /// Is an egui context menu open?
     #[getter]
     fn is_context_menu_open(&self) -> bool {
         self.0.is_context_menu_open()
     }
 
+    /// pointer_latest_pos() -> Pos2 | None
+    ///
     /// Latest reported pointer position.
     /// 
     /// When tapping a touch screen, this will be None.
@@ -404,6 +464,8 @@ impl Context {
     }
 
 
+    /// pointer_hover_pos() -> Pos2 | None
+    ///
     /// If it is a good idea to show a tooltip, where is pointer?
     ///
     /// Usage::
@@ -420,6 +482,8 @@ impl Context {
         })
     }
 
+    /// pointer_interact_pos() -> Pos2 | None
+    ///
     /// If you detect a click or drag and wants to know where it happened, use this.
     /// 
     /// Latest position of the mouse, but ignoring any crate::Event::PointerGone if there were interactions this pass. When tapping a touch screen, this will be the location of the touch.
@@ -439,6 +503,7 @@ impl Context {
     }
 }
 
+/// __init__(value: str) -> Str
 /// Str stores string value that can be referenced
 ///
 /// Usage::
@@ -451,18 +516,21 @@ impl Context {
 ///             data.value += ":) "
 #[pyclass]
 struct Str {
+    /// value() -> str
     #[pyo3(get, set)]
     value: String,
 }
 
 #[pymethods]
 impl Str {
+
     #[new]
     fn new(value: String) -> Self {
         Str { value }
     }
 }
 
+/// __init__(value: bool) -> Bool
 /// Bool stores a boolean value that can be referenced
 ///
 /// Usage::
@@ -478,6 +546,7 @@ impl Str {
 ///         checkbox(data, "Check me")
 #[pyclass]
 struct Bool {
+    /// value() -> bool
     #[pyo3(get, set)]
     value: bool,
 }
@@ -490,6 +559,7 @@ impl Bool {
     }
 }
 
+/// __init__() -> int
 /// Int stores integer value that can be referenced
 ///
 /// Usage::
@@ -502,6 +572,7 @@ impl Bool {
 ///             data.value += 1
 #[pyclass]
 struct Int {
+    /// value() -> int
     #[pyo3(get, set)]
     value: i32,
 }
@@ -514,6 +585,7 @@ impl Int {
     }
 }
 
+/// __init__() -> Float
 /// Float stores float value that can be referenced
 ///
 /// Usage::
@@ -527,6 +599,7 @@ impl Int {
 ///             data.value += 0.1
 #[pyclass]
 struct Float {
+    /// value() -> float
     #[pyo3(get, set)]
     value: f32,
 }
@@ -539,6 +612,7 @@ impl Float {
     }
 }
 
+/// __init__(r: float, g: float, b: float) -> RGB
 /// Rgb color picker
 ///
 /// Usage::
@@ -547,11 +621,14 @@ impl Float {
 ///     color_edit_button_rgb(color_rgb)
 #[pyclass]
 struct RGB {
+    /// r() -> float
     #[pyo3(get, set)]
     r: f32,
+    /// g() -> float
     #[pyo3(get, set)]
     g: f32,
     #[pyo3(get, set)]
+    /// b() -> float
     b: f32,
 }
 
@@ -563,6 +640,7 @@ impl RGB {
     }
 }
 
+/// __init__() -> datetime
 /// Date picker
 ///
 /// Usage::
@@ -571,6 +649,7 @@ impl RGB {
 ///     date_picker_button(date)
 #[pyclass]
 struct Date {
+    /// value() -> datetime
     #[pyo3(get, set)]
     value: NaiveDate,
 }
@@ -584,9 +663,10 @@ impl Date {
 }
 
 /// Values of this enum are used in Layout
-#[pyclass]
-#[derive(Clone)]
-enum LayoutType {
+#[pyclass(eq, eq_int)]
+#[derive(PartialEq)]
+#[repr(i32)]
+pub enum LayoutType {
     Horizontal,
     HorizontalCentered,
     HorizontalTop,
@@ -597,6 +677,7 @@ enum LayoutType {
     CenteredAndJustified,
 }
 
+/// __init__(layout: LayoutType) -> Layout
 /// Layout class can be used to specify layout of widgets that go after with statement.
 ///
 /// Usage::
@@ -653,7 +734,7 @@ struct Layout {
 #[pymethods]
 impl Layout {
     #[new]
-    fn __new__(layout_type: LayoutType) -> PyResult<Self> {
+    fn __new__(layout_type: &LayoutType) -> PyResult<Self> {
         unsafe {
             let parent_ui = current_ui(&UI)?;
 
@@ -685,11 +766,6 @@ impl Layout {
         }
     }
 
-    #[staticmethod]
-    fn __init__(scope_type: LayoutType) -> PyResult<Self> {
-        Self::__new__(scope_type)
-    }
-
     fn __enter__(&mut self) -> PyResult<()> {
         unsafe {
             let ui_stack = ui_stack(&UI)?;
@@ -727,6 +803,7 @@ impl Layout {
     }
 }
 
+/// __init__() -> Scope
 /// Create a scope for the contents.
 /// You can use this to temporarily change the Style of a sub-region
 ///
@@ -754,11 +831,6 @@ impl Scope {
         }
     }
 
-    #[staticmethod]
-    fn __init__() -> PyResult<Self> {
-        Self::__new__()
-    }
-
     fn __enter__(&mut self) -> PyResult<()> {
         unsafe {
             let ui_stack = ui_stack(&UI)?;
@@ -796,6 +868,7 @@ impl Scope {
     }
 }
 
+/// __init__() -> Group
 /// Visually groups the contents together.
 ///
 /// Usage::
@@ -820,11 +893,6 @@ impl Group {
 
             Ok(Self { prepared })
         }
-    }
-
-    #[staticmethod]
-    fn __init__() -> PyResult<Self> {
-        Self::__new__()
     }
 
     fn __enter__(&mut self) -> PyResult<()> {
@@ -884,7 +952,7 @@ impl eframe::App for PyeguiApp<'_> {
 
                 debug!("Execute update_func");
 
-                Python::with_gil(|py| {
+                Python::attach(|py| {
                     if let Err(err) = self.update_func.call1((ctx_r,)) {
                         err.display(py);
                     }
@@ -900,6 +968,8 @@ impl eframe::App for PyeguiApp<'_> {
     }
 }
 
+/// run_native(app_name: str, update_func: Callable[[Context], None], **kwargs) -> None
+///
 /// Creates a window and runs update_func.
 /// This is an entrypoint for your GUI application.
 ///
@@ -944,12 +1014,13 @@ impl eframe::App for PyeguiApp<'_> {
 ///     run_native("My app", update_func)
 ///
 #[pyfunction]
-#[pyo3(signature = (app_name, update_func, **kwargs))]
+#[pyo3(signature = (app_name: "str", update_func: "Callable[[Context], None]", **kwargs))]
 unsafe fn run_native(
     app_name: &str,
     update_func: Bound<'_, PyAny>,
     kwargs: Option<&Bound<'_, PyDict>>,
 ) -> PyResult<()> {
+    pyo3_log::init();
     debug!("Trying to get the app lock");
     // ensure thread safety
     let _lock = APP_MUTEX
@@ -968,8 +1039,8 @@ unsafe fn run_native(
             kwargs.get_item("inner_width")?,
         ) {
             viewport = viewport.with_inner_size([
-                width.downcast::<PyInt>()?.extract()?,
-                height.downcast::<PyInt>()?.extract()?,
+                width.cast::<PyInt>()?.extract()?,
+                height.cast::<PyInt>()?.extract()?,
             ]);
         }
 
@@ -978,8 +1049,8 @@ unsafe fn run_native(
             kwargs.get_item("min_inner_width")?,
         ) {
             viewport = viewport.with_min_inner_size([
-                width.downcast::<PyInt>()?.extract()?,
-                height.downcast::<PyInt>()?.extract()?,
+                width.cast::<PyInt>()?.extract()?,
+                height.cast::<PyInt>()?.extract()?,
             ]);
         }
 
@@ -988,29 +1059,29 @@ unsafe fn run_native(
             kwargs.get_item("max_inner_width")?,
         ) {
             viewport = viewport.with_max_inner_size([
-                width.downcast::<PyInt>()?.extract()?,
-                height.downcast::<PyInt>()?.extract()?,
+                width.cast::<PyInt>()?.extract()?,
+                height.cast::<PyInt>()?.extract()?,
             ]);
         }
 
         if let Some(fullscreen) = kwargs.get_item("fullscreen")? {
-            viewport = viewport.with_fullscreen(fullscreen.downcast::<PyBool>()?.extract()?);
+            viewport = viewport.with_fullscreen(fullscreen.cast::<PyBool>()?.extract()?);
         }
 
         if let Some(maximized) = kwargs.get_item("maximized")? {
-            viewport = viewport.with_maximized(maximized.downcast::<PyBool>()?.extract()?);
+            viewport = viewport.with_maximized(maximized.cast::<PyBool>()?.extract()?);
         }
 
         if let Some(resizable) = kwargs.get_item("resizable")? {
-            viewport = viewport.with_resizable(resizable.downcast::<PyBool>()?.extract()?);
+            viewport = viewport.with_resizable(resizable.cast::<PyBool>()?.extract()?);
         }
 
         if let Some(transparent) = kwargs.get_item("transparent")? {
-            viewport = viewport.with_transparent(transparent.downcast::<PyBool>()?.extract()?);
+            viewport = viewport.with_transparent(transparent.cast::<PyBool>()?.extract()?);
         }
 
         if let Some(icon_path) = kwargs.get_item("icon_path")? {
-            let path = icon_path.downcast::<PyString>()?.extract::<String>()?;
+            let path = icon_path.cast::<PyString>()?.extract::<String>()?;
             let buf = fs::read(path)?;
 
             let icon_data = eframe::icon_data::from_png_bytes(&buf)
@@ -1074,7 +1145,7 @@ unsafe fn run_nested_update_func(ui: &mut egui::Ui, update_fun: Bound<'_, PyAny>
     ui_stack.push(&raw mut *ui);
 
     if let Err(err) = update_fun.call0() {
-        Python::with_gil(|py| {
+        Python::attach(|py| {
             err.display(py);
         });
     }
@@ -1087,6 +1158,8 @@ unsafe fn run_nested_update_func(ui: &mut egui::Ui, update_fun: Bound<'_, PyAny>
 
 // UI functions
 
+/// heading(text: str) -> None
+///
 /// Show large text
 ///
 /// Example::
@@ -1100,6 +1173,8 @@ unsafe fn heading(text: &str) -> PyResult<()> {
     Ok(())
 }
 
+/// monospace(text: str) -> None
+///
 /// Show monospace (fixed width) text.
 ///
 /// Example::
@@ -1113,6 +1188,8 @@ unsafe fn monospace(text: &str) -> PyResult<()> {
     Ok(())
 }
 
+/// small(text: str) -> None
+///
 /// Show small text.
 ///
 /// Example::
@@ -1126,6 +1203,8 @@ unsafe fn small(text: &str) -> PyResult<()> {
     Ok(())
 }
 
+/// strong(text: str) -> None
+///
 /// Show text that stand out a bit (e.g. slightly brighter).
 ///
 /// Example::
@@ -1139,6 +1218,8 @@ unsafe fn strong(text: &str) -> PyResult<()> {
     Ok(())
 }
 
+/// weak(text: str) -> None
+///
 /// Show text that is weaker (fainter color).
 ///
 /// Example::
@@ -1152,6 +1233,8 @@ unsafe fn weak(text: &str) -> PyResult<()> {
     Ok(())
 }
 
+/// label(text: str) -> None
+///
 /// Show some text.
 ///
 /// Example::
@@ -1165,6 +1248,8 @@ unsafe fn label(text: &str) -> PyResult<()> {
     Ok(())
 }
 
+/// code(text: str) -> None
+///
 /// Show text as monospace with a gray background.
 ///
 /// Example::
@@ -1178,6 +1263,8 @@ unsafe fn code(text: &str) -> PyResult<()> {
     Ok(())
 }
 
+/// code_editor(text: Str) -> None
+///
 /// Show singleline text field and update the text
 ///
 /// Example::
@@ -1193,6 +1280,8 @@ unsafe fn code_editor(text: &mut Str) -> PyResult<()> {
     Ok(())
 }
 
+/// text_edit_singleline(text: Str, **kwargs) -> None
+///
 /// Show singleline text field and update the text
 ///
 /// Example::
@@ -1209,7 +1298,7 @@ unsafe fn text_edit_singleline(text: &mut Str, kwargs: Option<&Bound<'_, PyDict>
 
     if let Some(kwargs) = kwargs {
         if let Some(hint_text) = kwargs.get_item("hint_text")? {
-            w = w.hint_text(hint_text.downcast::<PyString>()?.extract::<String>()?);
+            w = w.hint_text(hint_text.cast::<PyString>()?.extract::<String>()?);
         }
     }
 
@@ -1217,6 +1306,8 @@ unsafe fn text_edit_singleline(text: &mut Str, kwargs: Option<&Bound<'_, PyDict>
     Ok(())
 }
 
+/// text_edit_multiline(text: Str, **kwargs) -> None
+///
 /// Show multiline text field and update the text
 ///
 /// Example::
@@ -1233,7 +1324,7 @@ unsafe fn text_edit_multiline(text: &mut Str, kwargs: Option<&Bound<'_, PyDict>>
 
     if let Some(kwargs) = kwargs {
         if let Some(hint_text) = kwargs.get_item("hint_text")? {
-            w = w.hint_text(hint_text.downcast::<PyString>()?.extract::<String>()?);
+            w = w.hint_text(hint_text.cast::<PyString>()?.extract::<String>()?);
         }
     }
 
@@ -1241,6 +1332,8 @@ unsafe fn text_edit_multiline(text: &mut Str, kwargs: Option<&Bound<'_, PyDict>>
     Ok(())
 }
 
+/// button_clicked(text: str) -> bool
+///
 /// Returns true if the button was clicked this frame
 ///
 /// Example::
@@ -1254,6 +1347,8 @@ unsafe fn button_clicked(text: &str) -> PyResult<bool> {
     Ok(ui.button(text).clicked())
 }
 
+/// small_button_clicked(text: str) -> bool
+///
 /// Returns true if the small button was clicked this frame
 ///
 /// Example::
@@ -1267,6 +1362,8 @@ unsafe fn small_button_clicked(text: &str) -> PyResult<bool> {
     Ok(ui.small_button(text).clicked())
 }
 
+/// horizontal(update_fun: Callable[[Context], None]) -> None
+///
 /// Start a ui with horizontal layout. After you have called this, the function registers the contents as any other widget.
 ///
 /// Elements will be centered on the Y axis, i.e. adjusted up and down to lie in the center of the horizontal layout. The initial height is style.spacing.interact_size.y. Centering is almost always what you want if you are planning to mix widgets or use different types of text.
@@ -1286,6 +1383,8 @@ unsafe fn horizontal(update_fun: Bound<'_, PyAny>) -> PyResult<()> {
         .inner
 }
 
+/// horizontal_centered(update_fun: Callable[[Context], None]) -> None
+///
 /// Like horizontal, but allocates the full vertical height and then centers elements vertically.
 #[pyfunction]
 unsafe fn horizontal_centered(update_fun: Bound<'_, PyAny>) -> PyResult<()> {
@@ -1293,6 +1392,8 @@ unsafe fn horizontal_centered(update_fun: Bound<'_, PyAny>) -> PyResult<()> {
         .horizontal_centered(|ui| run_nested_update_func(ui, update_fun))
         .inner
 }
+/// horizontal_top(update_fun: Callable[[Context], None]) -> None
+///
 /// Like horizontal, but aligns content with top.
 #[pyfunction]
 unsafe fn horizontal_top(update_fun: Bound<'_, PyAny>) -> PyResult<()> {
@@ -1301,6 +1402,8 @@ unsafe fn horizontal_top(update_fun: Bound<'_, PyAny>) -> PyResult<()> {
         .inner
 }
 
+/// horizontal_wrapped(update_fun: Callable[[Context], None]) -> None
+///
 /// Start a ui with horizontal layout that wraps to a new row when it reaches the right edge of the max_size. After you have called this, the function registers the contents as any other widget.
 ///
 /// Elements will be centered on the Y axis, i.e. adjusted up and down to lie in the center of the horizontal layout. The initial height is style.spacing.interact_size.y. Centering is almost always what you want if you are planning to mix widgets or use different types of text.
@@ -1311,6 +1414,8 @@ unsafe fn horizontal_wrapped(update_fun: Bound<'_, PyAny>) -> PyResult<()> {
         .inner
 }
 
+/// vertical(update_fun: Callable[[Context], None]) -> None
+///
 /// Start a ui with vertical layout. Widgets will be left-justified.
 #[pyfunction]
 unsafe fn vertical(update_fun: Bound<'_, PyAny>) -> PyResult<()> {
@@ -1319,6 +1424,8 @@ unsafe fn vertical(update_fun: Bound<'_, PyAny>) -> PyResult<()> {
         .inner
 }
 
+/// vertical_centered(update_fun: Callable[[Context], None]) -> None
+///
 /// Start a ui with vertical layout. Widgets will be horizontally centered.
 #[pyfunction]
 unsafe fn vertical_centered(update_fun: Bound<'_, PyAny>) -> PyResult<()> {
@@ -1327,6 +1434,8 @@ unsafe fn vertical_centered(update_fun: Bound<'_, PyAny>) -> PyResult<()> {
         .inner
 }
 
+/// vertical_centered_justified(update_fun: Callable[[Context], None]) -> None
+///
 /// Start a ui with vertical layout. Widgets will be horizontally centered and justified (fill full width).
 #[pyfunction]
 unsafe fn vertical_centered_justified(update_fun: Bound<'_, PyAny>) -> PyResult<()> {
@@ -1335,6 +1444,8 @@ unsafe fn vertical_centered_justified(update_fun: Bound<'_, PyAny>) -> PyResult<
         .inner
 }
 
+/// centered_and_justified(update_fun: Callable[[Context], None]) -> None
+///
 /// This will make the next added widget centered and justified in the available space.
 ///
 /// Only one widget may be added inside update_func!
@@ -1345,6 +1456,8 @@ unsafe fn centered_and_justified(update_fun: Bound<'_, PyAny>) -> PyResult<()> {
         .inner
 }
 
+/// collapsing(heading: str, update_fun: Callable[[Context], None]) -> None
+///
 /// A CollapsingHeader that starts out collapsed.
 ///
 /// Example::
@@ -1358,6 +1471,8 @@ unsafe fn collapsing(heading: &str, update_fun: Bound<'_, PyAny>) -> PyResult<()
     Ok(())
 }
 
+/// indent(update_fun: Callable[[Context], None]) -> None
+///
 /// Create a child ui which is indented to the right.
 /// Example::
 ///
@@ -1371,6 +1486,8 @@ unsafe fn indent(update_fun: Bound<'_, PyAny>) -> PyResult<()> {
         .inner
 }
 
+/// group(update_fun: Callable[[Context], None]) -> None
+///
 /// Visually groups the contents together.
 ///
 /// Example::
@@ -1387,6 +1504,8 @@ unsafe fn group(update_fun: Bound<'_, PyAny>) -> PyResult<()> {
         .inner
 }
 
+/// scroll_area_vertical(update_fun: Callable[[Context], None]) -> None
+///
 /// Create a vertical scroll area.
 ///
 /// Example::
@@ -1403,6 +1522,8 @@ unsafe fn scroll_area_vertical(update_fun: Bound<'_, PyAny>) -> PyResult<()> {
 }
 
 
+/// scroll_area_horizontal(update_fun: Callable[[Context], None]) -> None
+///
 /// Create a horizontal scroll area.
 ///
 /// Example::
@@ -1418,6 +1539,8 @@ unsafe fn scroll_area_horizontal(update_fun: Bound<'_, PyAny>) -> PyResult<()> {
     egui::ScrollArea::horizontal().show(current_ui(&UI)?, |ui| run_nested_update_func(ui, update_fun)).inner
 }
 
+/// scope(update_fun: Callable[[Context], None]) -> None
+///
 /// Create a scoped child ui.
 ///
 /// You can use this to temporarily change the Style of a sub-region.
@@ -1437,6 +1560,8 @@ unsafe fn scope(update_fun: Bound<'_, PyAny>) -> PyResult<()> {
         .inner
 }
 
+/// slider_float(value: Float, min: float, max: float, text: str) -> None
+///
 /// Control float with a slider.
 ///
 /// Example::
@@ -1452,6 +1577,8 @@ unsafe fn slider_float(value: &mut Float, min: f32, max: f32, text: &str) -> PyR
     Ok(())
 }
 
+/// slider_int(value: Int, min: int, max: int, text: str) -> None
+///
 /// Control int with a slider.
 ///
 /// Example::
@@ -1471,6 +1598,8 @@ unsafe fn slider_int(value: &mut Int, min: i32, max: i32, text: &str) -> PyResul
     Ok(())
 }
 
+/// drag_float(value: Float, min: float, max: float, speed: float) -> None
+///
 /// Control float by dragging the number.
 ///
 /// Example::
@@ -1490,6 +1619,8 @@ unsafe fn drag_float(value: &mut Float, min: f32, max: f32, speed: f32) -> PyRes
     Ok(())
 }
 
+/// drag_int(value: Int, min: int, max: int, speed: int) -> None
+///
 /// Control int by dragging the number.
 ///
 /// Example::
@@ -1509,6 +1640,8 @@ unsafe fn drag_int(value: &mut Int, min: i32, max: i32, speed: i32) -> PyResult<
     Ok(())
 }
 
+/// hyperlink(url: str) -> None
+///
 /// A clickable hyperlink
 ///
 /// Example::
@@ -1522,6 +1655,8 @@ unsafe fn hyperlink(url: &str) -> PyResult<()> {
     Ok(())
 }
 
+/// hyperlink_to(label: str, url: str) -> None
+///
 /// A clickable hyperlink with label
 ///
 /// Example::
@@ -1535,6 +1670,8 @@ unsafe fn hyperlink_to(label: &str, url: &str) -> PyResult<()> {
     Ok(())
 }
 
+/// link_clicked(label: str) -> bool
+///
 /// Clickable text, that looks like a hyperlink.
 /// To link to a web page, use hyperlink or hyperlink_to.
 ///
@@ -1549,6 +1686,8 @@ unsafe fn link_clicked(label: &str) -> PyResult<bool> {
     Ok(ui.link(label).clicked())
 }
 
+/// checkbox(checked: Bool, text: str) -> None
+///
 /// Show a checkbox.
 ///
 /// Example::
@@ -1564,6 +1703,8 @@ unsafe fn checkbox(checked: &mut Bool, text: &str) -> PyResult<()> {
     Ok(())
 }
 
+/// toggle_value(selected: Bool, text: str) -> None
+///
 /// Acts like a checkbox, but looks like a selectable label.
 ///
 /// Example::
@@ -1579,6 +1720,8 @@ unsafe fn toggle_value(selected: &mut Bool, text: &str) -> PyResult<()> {
     Ok(())
 }
 
+/// radio_value(current_value: Int, alternative: int, text: str) -> None
+///
 /// Show a radio button. It is selected if current_value == selected_value. If clicked, selected_value is assigned to current_value.
 ///
 /// Example::
@@ -1600,6 +1743,8 @@ unsafe fn radio_value(current_value: &mut Int, alternative: i32, text: &str) -> 
     Ok(())
 }
 
+/// selectable_value(current_value: Int, alternative: int, text: str) -> None
+///
 /// Show selectable text. It is selected if current_value == selected_value. If clicked, selected_value is assigned to current_value.
 ///
 /// Example::
@@ -1621,6 +1766,8 @@ unsafe fn selectable_value(current_value: &mut Int, alternative: i32, text: &str
     Ok(())
 }
 
+/// combo_box(current_value: Int, alternatives: list[int], names: list[str], label: str) -> None
+///
 /// Shows a combo box with values defined in "alternatives" and their corresponding names
 /// defined in "names"
 ///
@@ -1661,6 +1808,8 @@ unsafe fn combo_box(
     Ok(())
 }
 
+/// progress(value: float) -> None
+///
 /// A simple progress bar.
 /// value in the [0, 1] range, where 1 means “completed”.
 ///
@@ -1675,6 +1824,8 @@ unsafe fn progress(value: f32) -> PyResult<()> {
     Ok(())
 }
 
+/// spinner() -> None
+///
 /// A spinner widget used to indicate loading.
 ///
 /// Example::
@@ -1688,6 +1839,8 @@ unsafe fn spinner() -> PyResult<()> {
     Ok(())
 }
 
+/// color_edit_button_rgb(rgb: RGB) -> None
+///
 /// Shows a button with the given color. If the user clicks the button, a full color picker is shown.
 ///
 /// Example::
@@ -1711,6 +1864,8 @@ unsafe fn color_edit_button_rgb(rgb: &mut RGB) -> PyResult<()> {
     Ok(())
 }
 
+/// image(source: str, **kwargs) -> None
+///
 /// Show an image available at the given uri.
 ///
 /// Example::
@@ -1726,16 +1881,18 @@ unsafe fn image(source: &str, kwargs: Option<&Bound<'_, PyDict>>) -> PyResult<()
 
     if let Some(kwargs) = kwargs {
         if let Some(height) = kwargs.get_item("max_height")? {
-            img = img.max_height(height.downcast::<PyInt>()?.extract()?);
+            img = img.max_height(height.cast::<PyInt>()?.extract()?);
         }
         if let Some(width) = kwargs.get_item("max_width")? {
-            img = img.max_width(width.downcast::<PyInt>()?.extract()?);
+            img = img.max_width(width.cast::<PyInt>()?.extract()?);
         }
     }
     ui.add(img);
     Ok(())
 }
 
+/// image_and_text_clicked(source: str, text: str) -> bool
+///
 /// Creates a button with an image to the left of the text
 ///
 /// Example::
@@ -1749,6 +1906,8 @@ unsafe fn image_and_text_clicked(source: &str, text: &str) -> PyResult<bool> {
     Ok(ui.add(egui::Button::image_and_text(source, text)).clicked())
 }
 
+/// separator() -> None
+///
 /// A visual separator. A horizontal or vertical line on layout.
 ///
 /// Example::
@@ -1762,6 +1921,8 @@ unsafe fn separator() -> PyResult<()> {
     Ok(())
 }
 
+/// set_invisible() -> None
+///
 /// Calling set_invisible() will cause all further widgets to be invisible, yet still allocate space.
 ///
 /// The widgets will not be interactive (set_invisible() implies disable()).
@@ -1780,6 +1941,8 @@ unsafe fn set_invisible() -> PyResult<()> {
     Ok(())
 }
 
+/// disable() -> None
+///
 /// Calling disable() will cause the Ui to deny all future interaction and all the widgets will draw with a gray look.
 ///
 /// Usually it is more convenient to use add_enabled.
@@ -1799,6 +1962,8 @@ unsafe fn disable() -> PyResult<()> {
     Ok(())
 }
 
+/// add_enabled(enabled: bool, update_fun: Callable[[Context], None]) -> None
+///
 /// Add a section that is possibly disabled, i.e. greyed out and non-interactive.
 ///
 /// If you call add_enabled from within an already disabled Ui, the result will always be disabled, even if the enabled argument is true.
@@ -1814,6 +1979,8 @@ unsafe fn add_enabled(enabled: bool, update_fun: Bound<'_, PyAny>) -> PyResult<(
         .inner
 }
 
+/// set_opacity(opacity: float) -> None
+///
 /// Make the widget in this Ui semi-transparent.
 ///
 /// opacity must be between 0.0 and 1.0, where 0.0 means fully transparent (i.e., invisible) and 1.0 means fully opaque.
@@ -1828,6 +1995,8 @@ unsafe fn set_opacity(opacity: f32) -> PyResult<()> {
     Ok(())
 }
 
+/// date_picker_button(selection: Date) -> None
+///
 /// Shows a date, and will open a date picker popup when clicked.
 ///
 /// Example::
@@ -1843,6 +2012,8 @@ unsafe fn date_picker_button(selection: &mut Date) -> PyResult<()> {
     Ok(())
 }
 
+/// add_space(amount: float) -> None
+///
 /// Add extra space before the next widget.
 ///
 /// The direction is dependent on the layout.
@@ -1859,73 +2030,134 @@ unsafe fn add_space(amount: f32) -> PyResult<()> {
 }
 
 #[pymodule]
-fn pyegui(m: &Bound<'_, PyModule>) -> PyResult<()> {
-    pyo3_log::init();
-    // classes
-    m.add_class::<Str>()?;
-    m.add_class::<Bool>()?;
-    m.add_class::<Int>()?;
-    m.add_class::<Float>()?;
-    m.add_class::<RGB>()?;
-    m.add_class::<Date>()?;
-    m.add_class::<Context>()?;
-    m.add_class::<Layout>()?;
-    m.add_class::<LayoutType>()?;
-    m.add_class::<Scope>()?;
-    m.add_class::<Group>()?;
-    m.add_class::<CursorIcon>()?;
-    m.add_class::<Pos2>()?;
-    // functions
-    m.add_function(wrap_pyfunction!(run_native, m)?)?;
-    m.add_function(wrap_pyfunction!(heading, m)?)?;
-    m.add_function(wrap_pyfunction!(monospace, m)?)?;
-    m.add_function(wrap_pyfunction!(small, m)?)?;
-    m.add_function(wrap_pyfunction!(strong, m)?)?;
-    m.add_function(wrap_pyfunction!(weak, m)?)?;
-    m.add_function(wrap_pyfunction!(label, m)?)?;
-    m.add_function(wrap_pyfunction!(code, m)?)?;
-    m.add_function(wrap_pyfunction!(code_editor, m)?)?;
-    m.add_function(wrap_pyfunction!(text_edit_singleline, m)?)?;
-    m.add_function(wrap_pyfunction!(text_edit_multiline, m)?)?;
-    m.add_function(wrap_pyfunction!(button_clicked, m)?)?;
-    m.add_function(wrap_pyfunction!(small_button_clicked, m)?)?;
-    m.add_function(wrap_pyfunction!(horizontal, m)?)?;
-    m.add_function(wrap_pyfunction!(horizontal_centered, m)?)?;
-    m.add_function(wrap_pyfunction!(horizontal_top, m)?)?;
-    m.add_function(wrap_pyfunction!(horizontal_wrapped, m)?)?;
-    m.add_function(wrap_pyfunction!(vertical, m)?)?;
-    m.add_function(wrap_pyfunction!(vertical_centered, m)?)?;
-    m.add_function(wrap_pyfunction!(vertical_centered_justified, m)?)?;
-    m.add_function(wrap_pyfunction!(centered_and_justified, m)?)?;
-    m.add_function(wrap_pyfunction!(collapsing, m)?)?;
-    m.add_function(wrap_pyfunction!(indent, m)?)?;
-    m.add_function(wrap_pyfunction!(group, m)?)?;
-    m.add_function(wrap_pyfunction!(scroll_area_vertical, m)?)?;
-    m.add_function(wrap_pyfunction!(scroll_area_horizontal, m)?)?;
-    m.add_function(wrap_pyfunction!(scope, m)?)?;
-    m.add_function(wrap_pyfunction!(slider_float, m)?)?;
-    m.add_function(wrap_pyfunction!(slider_int, m)?)?;
-    m.add_function(wrap_pyfunction!(drag_int, m)?)?;
-    m.add_function(wrap_pyfunction!(drag_float, m)?)?;
-    m.add_function(wrap_pyfunction!(hyperlink, m)?)?;
-    m.add_function(wrap_pyfunction!(hyperlink_to, m)?)?;
-    m.add_function(wrap_pyfunction!(link_clicked, m)?)?;
-    m.add_function(wrap_pyfunction!(checkbox, m)?)?;
-    m.add_function(wrap_pyfunction!(radio_value, m)?)?;
-    m.add_function(wrap_pyfunction!(toggle_value, m)?)?;
-    m.add_function(wrap_pyfunction!(selectable_value, m)?)?;
-    m.add_function(wrap_pyfunction!(combo_box, m)?)?;
-    m.add_function(wrap_pyfunction!(progress, m)?)?;
-    m.add_function(wrap_pyfunction!(spinner, m)?)?;
-    m.add_function(wrap_pyfunction!(color_edit_button_rgb, m)?)?;
-    m.add_function(wrap_pyfunction!(crate::image, m)?)?;
-    m.add_function(wrap_pyfunction!(image_and_text_clicked, m)?)?;
-    m.add_function(wrap_pyfunction!(separator, m)?)?;
-    m.add_function(wrap_pyfunction!(set_invisible, m)?)?;
-    m.add_function(wrap_pyfunction!(disable, m)?)?;
-    m.add_function(wrap_pyfunction!(add_enabled, m)?)?;
-    m.add_function(wrap_pyfunction!(set_opacity, m)?)?;
-    m.add_function(wrap_pyfunction!(date_picker_button, m)?)?;
-    m.add_function(wrap_pyfunction!(add_space, m)?)?;
-    Ok(())
+mod pyegui {
+    #[pymodule_export]
+    use super::Str;
+    #[pymodule_export]
+    use super::Bool;
+    #[pymodule_export]
+    use super::Int;
+    #[pymodule_export]
+    use super::Float;
+    #[pymodule_export]
+    use super::RGB;
+    #[pymodule_export]
+    use super::Date;
+    #[pymodule_export]
+    use super::Context;
+    #[pymodule_export]
+    use super::Layout;
+    #[pymodule_export]
+    use super::LayoutType;
+    #[pymodule_export]
+    use super::Scope;
+    #[pymodule_export]
+    use super::Group;
+    #[pymodule_export]
+    use super::CursorIcon;
+    #[pymodule_export]
+    use super::Pos2;
+
+    #[pymodule_export]
+    use super::run_native;
+    #[pymodule_export]
+    use super::heading;
+    #[pymodule_export]
+    use super::monospace;
+    #[pymodule_export]
+    use super::small;
+    #[pymodule_export]
+    use super::strong;
+    #[pymodule_export]
+    use super::weak;
+    #[pymodule_export]
+    use super::label;
+    #[pymodule_export]
+    use super::code;
+    #[pymodule_export]
+    use super::code_editor;
+    #[pymodule_export]
+    use super::text_edit_singleline;
+    #[pymodule_export]
+    use super::text_edit_multiline;
+    #[pymodule_export]
+    use super::button_clicked;
+    #[pymodule_export]
+    use super::small_button_clicked;
+    #[pymodule_export]
+    use super::horizontal;
+    #[pymodule_export]
+    use super::horizontal_centered;
+    #[pymodule_export]
+    use super::horizontal_top;
+    #[pymodule_export]
+    use super::horizontal_wrapped;
+    #[pymodule_export]
+    use super::vertical;
+    #[pymodule_export]
+    use super::vertical_centered;
+    #[pymodule_export]
+    use super::vertical_centered_justified;
+    #[pymodule_export]
+    use super::centered_and_justified;
+    #[pymodule_export]
+    use super::collapsing;
+    #[pymodule_export]
+    use super::indent;
+    #[pymodule_export]
+    use super::group;
+    #[pymodule_export]
+    use super::scroll_area_vertical;
+    #[pymodule_export]
+    use super::scroll_area_horizontal;
+    #[pymodule_export]
+    use super::scope;
+    #[pymodule_export]
+    use super::slider_float;
+    #[pymodule_export]
+    use super::slider_int;
+    #[pymodule_export]
+    use super::drag_int;
+    #[pymodule_export]
+    use super::drag_float;
+    #[pymodule_export]
+    use super::hyperlink;
+    #[pymodule_export]
+    use super::hyperlink_to;
+    #[pymodule_export]
+    use super::link_clicked;
+    #[pymodule_export]
+    use super::checkbox;
+    #[pymodule_export]
+    use super::radio_value;
+    #[pymodule_export]
+    use super::toggle_value;
+    #[pymodule_export]
+    use super::selectable_value;
+    #[pymodule_export]
+    use super::combo_box;
+    #[pymodule_export]
+    use super::progress;
+    #[pymodule_export]
+    use super::spinner;
+    #[pymodule_export]
+    use super::color_edit_button_rgb;
+    #[pymodule_export]
+    use crate::image;
+    #[pymodule_export]
+    use super::image_and_text_clicked;
+    #[pymodule_export]
+    use super::separator;
+    #[pymodule_export]
+    use super::set_invisible;
+    #[pymodule_export]
+    use super::disable;
+    #[pymodule_export]
+    use super::add_enabled;
+    #[pymodule_export]
+    use super::set_opacity;
+    #[pymodule_export]
+    use super::date_picker_button;
+    #[pymodule_export]
+    use super::add_space;
 }

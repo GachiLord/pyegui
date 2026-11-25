@@ -18,10 +18,11 @@ debug:
 	.venv/bin/python debug.py
 
 doc: develop
+	.venv/bin/sphinx-apidoc ./docs/ -o ./docs/_build
 	.venv/bin/sphinx-build -v ./docs/ ./docs/_build
 
 develop:
-	.venv/bin/maturin develop
+	.venv/bin/maturin develop --generate-stubs
 
 develop-release:
 	.venv/bin/maturin develop --release
