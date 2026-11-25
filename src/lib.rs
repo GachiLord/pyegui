@@ -1720,6 +1720,24 @@ unsafe fn toggle_value(selected: &mut Bool, text: &str) -> PyResult<()> {
     Ok(())
 }
 
+
+/// radio(selected: bool, text: str) -> None
+///
+/// Show a RadioButton. Often you want to use radio_value instead.
+///
+/// Example::
+///
+///     data = Bool(false)
+///     # inside update_func
+///     toggle_value(data, "check me")
+#[pyfunction]
+unsafe fn radio(selected: bool, text: &str) -> PyResult<()> {
+    let ui = current_ui(&UI)?;
+
+    let _ = ui.radio(selected, text);
+    Ok(())
+}
+
 /// radio_value(current_value: Int, alternative: int, text: str) -> None
 ///
 /// Show a radio button. It is selected if current_value == selected_value. If clicked, selected_value is assigned to current_value.
@@ -1995,6 +2013,36 @@ unsafe fn set_opacity(opacity: f32) -> PyResult<()> {
     Ok(())
 }
 
+/// multiply_opacity(opacity: float) -> None
+///
+/// Like set_opacity, but multiplies the given value with the current opacity.
+///
+/// Example::
+///
+///     multiply_opacity(0.5)
+#[pyfunction]
+unsafe fn multiply_opacity(opacity: f32) -> PyResult<()> {
+    let ui = current_ui(&UI)?;
+
+    ui.multiply_opacity(opacity);
+    Ok(())
+}
+
+
+/// opacity() -> float
+///
+/// Read the current opacity of the underlying painter.
+///
+/// Example::
+///
+///     print(opacity())
+#[pyfunction]
+unsafe fn opacity() -> PyResult<f32> {
+    let ui = current_ui(&UI)?;
+
+    Ok(ui.opacity())
+}
+
 /// date_picker_button(selection: Date) -> None
 ///
 /// Shows a date, and will open a date picker popup when clicked.
@@ -2204,6 +2252,8 @@ mod pyegui {
     #[pymodule_export]
     use super::radio_value;
     #[pymodule_export]
+    use super::radio;
+    #[pymodule_export]
     use super::toggle_value;
     #[pymodule_export]
     use super::selectable_value;
@@ -2229,6 +2279,10 @@ mod pyegui {
     use super::add_enabled;
     #[pymodule_export]
     use super::set_opacity;
+    #[pymodule_export]
+    use super::multiply_opacity;
+    #[pymodule_export]
+    use super::opacity;
     #[pymodule_export]
     use super::date_picker_button;
     #[pymodule_export]
