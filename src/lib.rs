@@ -2368,6 +2368,26 @@ unsafe fn shrink_width_to_current() -> PyResult<()> {
     Ok(())
 }
 
+/// contains_pointer() -> bool
+///
+/// Is the pointer (mouse/touch) above the current Ui?
+/// 
+/// Example::
+///
+///    with Group():
+///        heading("text")
+///        heading("text")
+///
+///        if contains_pointer():
+///            heading("This text is shown when group is hovered")
+///
+#[pyfunction]
+unsafe fn contains_pointer() -> PyResult<bool> {
+    let ui = current_ui(&UI)?;
+
+    Ok(ui.ui_contains_pointer())
+}
+
 #[pymodule]
 mod pyegui {
     #[pymodule_export]
@@ -2539,4 +2559,7 @@ mod pyegui {
     use super::shrink_height_to_current;
     #[pymodule_export]
     use super::shrink_width_to_current;
+    #[pymodule_export]
+    use super::contains_pointer;
+
 }
