@@ -121,6 +121,27 @@ pub struct Pos2 {
     y: f32,
 }
 
+
+#[pyclass(eq, eq_int)]
+#[derive(PartialEq)]
+#[repr(i32)]
+pub enum Align {
+    Min,
+    Center,
+    Max,
+}
+
+
+impl From<&Align> for egui::Align {
+    fn from(align: &Align) -> Self {
+        match align {
+            Align::Min => Self::Min,
+            Align::Center => Self::Center,
+            Align::Max => Self::Max,
+        }
+    }
+}
+
 /// Context object that controls global aspects of your app
 ///
 /// Usage::
@@ -2150,6 +2171,30 @@ unsafe fn menu_image_text_button(image_path: &str, title: &str, update_fun: Boun
     Ok(())
 }
 
+
+/// scroll_to_cursor(align: Align | None) -> None
+///
+///
+/// Example::
+///
+///     scroll_to_cursor()
+#[pyfunction]
+#[pyo3(signature = (align: "Align" = None))]
+unsafe fn scroll_to_cursor(align: Option<&Align>) -> PyResult<()> {
+    match align {
+        Some(a) => {
+            dbg!(egui::Align::from(a));
+            current_ui(&UI)?.scroll_to_cursor(Some(egui::Align::from(a)));
+        },
+        None => {
+            current_ui(&UI)?.scroll_to_cursor(None);
+        }
+    }
+
+    Ok(())
+}
+
+
 #[pymodule]
 mod pyegui {
     #[pymodule_export]
@@ -2178,6 +2223,8 @@ mod pyegui {
     use super::CursorIcon;
     #[pymodule_export]
     use super::Pos2;
+    #[pymodule_export]
+    use super::Align;
 
     #[pymodule_export]
     use super::run_native;
@@ -2295,4 +2342,7 @@ mod pyegui {
     use super::menu_image_button;
     #[pymodule_export]
     use super::menu_image_text_button;
+    #[pymodule_export]
+    use super::scroll_to_cursor;
+
 }

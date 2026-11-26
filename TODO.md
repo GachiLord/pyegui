@@ -107,10 +107,10 @@
 * reset_style?
 * response?
 * ~~scope~~
-* scroll_to_cursor
+* ~~scroll_to_cursor~~
 * scroll_to_cursor_animation
-* scroll_to_rect
-* scroll_to_rect_animation
+* scroll_to_rect?
+* scroll_to_rect_animation?
 * scroll_with_delta
 * scroll_with_delta_animation
 * selectable_label
