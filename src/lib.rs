@@ -2336,6 +2336,38 @@ unsafe fn expand_to_include_y(y: f32) -> PyResult<()> {
     Ok(())
 }
 
+/// shrink_height_to_current() -> None
+///
+/// Helper: shrinks the max height to the current height, so further widgets will try not to be taller than previous widgets.
+/// 
+/// Example::
+///
+///     shrink_height_to_current()
+///
+#[pyfunction]
+unsafe fn shrink_height_to_current() -> PyResult<()> {
+    let ui = current_ui(&UI)?;
+
+    ui.shrink_height_to_current();
+    Ok(())
+}
+
+/// shrink_width_to_current() -> None
+///
+/// Helper: shrinks the max width to the current width, so further widgets will try not to be wider than previous widgets. Useful for normal vertical layouts.
+/// 
+/// Example::
+///
+///     shrink_width_to_current()
+///
+#[pyfunction]
+unsafe fn shrink_width_to_current() -> PyResult<()> {
+    let ui = current_ui(&UI)?;
+
+    ui.shrink_width_to_current();
+    Ok(())
+}
+
 #[pymodule]
 mod pyegui {
     #[pymodule_export]
@@ -2503,4 +2535,8 @@ mod pyegui {
     use super::expand_to_include_x;
     #[pymodule_export]
     use super::expand_to_include_y;
+    #[pymodule_export]
+    use super::shrink_height_to_current;
+    #[pymodule_export]
+    use super::shrink_width_to_current;
 }

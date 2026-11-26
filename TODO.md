@@ -132,8 +132,8 @@
 * ~~set_width~~
 * set_width_range
 * shrink_clip_rect
-* shrink_height_to_current
-* shrink_width_to_current
+* ~~shrink_height_to_current~~
+* ~~shrink_width_to_current~~
 * skip_ahead_auto_ids
 * ~~small~~
 * ~~small_button~~
