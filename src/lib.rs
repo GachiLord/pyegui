@@ -1741,6 +1741,20 @@ unsafe fn toggle_value(selected: &mut Bool, text: &str) -> PyResult<()> {
     Ok(())
 }
 
+/// selectable_label(selected: bool, text: str) -> None
+///
+/// Show a label which can be selected or not.
+///
+/// Example::
+///
+///     selectable_label(True, "checked")
+#[pyfunction]
+unsafe fn selectable_label(selected: bool, text: &str) -> PyResult<()> {
+    let ui = current_ui(&UI)?;
+
+    let _ = ui.selectable_label(selected, text);
+    Ok(())
+}
 
 /// radio(selected: bool, text: str) -> None
 ///
@@ -2194,6 +2208,133 @@ unsafe fn scroll_to_cursor(align: Option<&Align>) -> PyResult<()> {
     Ok(())
 }
 
+/// set_height(height: float) -> None
+///
+/// Set both the minimum and maximum height.
+/// 
+/// Example::
+///
+///     set_height(5)
+///
+#[pyfunction]
+unsafe fn set_height(height: f32) -> PyResult<()> {
+    let ui = current_ui(&UI)?;
+
+    ui.set_height(height);
+    Ok(())
+}
+
+/// set_max_height(height: float) -> None
+///
+/// Set the maximum height of the ui. You won’t be able to shrink it below the current minimum size.
+/// 
+/// Example::
+///
+///     set_max_height(5)
+///
+#[pyfunction]
+unsafe fn set_max_height(height: f32) -> PyResult<()> {
+    let ui = current_ui(&UI)?;
+
+    ui.set_max_height(height);
+    Ok(())
+}
+
+/// set_min_height(height: float) -> None
+///
+/// Set the minimum height of the ui. This can’t shrink the ui, only make it larger.
+/// 
+/// Example::
+///
+///     set_min_height(5)
+///
+#[pyfunction]
+unsafe fn set_min_height(height: f32) -> PyResult<()> {
+    let ui = current_ui(&UI)?;
+
+    ui.set_min_height(height);
+    Ok(())
+}
+
+/// set_width(width: float) -> None
+///
+/// Set both the minimum and maximum width.
+/// 
+/// Example::
+///
+///     set_width(500)
+///
+#[pyfunction]
+unsafe fn set_width(width: f32) -> PyResult<()> {
+    let ui = current_ui(&UI)?;
+
+    ui.set_width(width);
+    Ok(())
+}
+
+/// set_max_width(width: float) -> None
+///
+/// Set the maximum width of the ui. You won’t be able to shrink it below the current minimum size.
+/// 
+/// Example::
+///
+///     set_max_width(500)
+///
+#[pyfunction]
+unsafe fn set_max_width(width: f32) -> PyResult<()> {
+    let ui = current_ui(&UI)?;
+
+    ui.set_max_width(width);
+    Ok(())
+}
+
+/// set_min_width(width: float) -> None
+///
+/// Set the minimum width of the ui. This can’t shrink the ui, only make it larger.
+/// 
+/// Example::
+///
+///     set_min_width(500)
+///
+#[pyfunction]
+unsafe fn set_min_width(width: f32) -> PyResult<()> {
+    let ui = current_ui(&UI)?;
+
+    ui.set_min_width(width);
+    Ok(())
+}
+
+/// expand_to_include_x(x: float) -> None
+///
+/// Ensure we are big enough to contain the given x-coordinate. This is sometimes useful to expand a ui to stretch to a certain place.
+/// 
+/// Example::
+///
+///     expand_to_include_x(400)
+///
+#[pyfunction]
+unsafe fn expand_to_include_x(x: f32) -> PyResult<()> {
+    let ui = current_ui(&UI)?;
+
+    ui.expand_to_include_x(x);
+    Ok(())
+}
+
+/// expand_to_include_y(y: float) -> None
+///
+/// Ensure we are big enough to contain the given y-coordinate. This is sometimes useful to expand a ui to stretch to a certain place.
+/// 
+/// Example::
+///
+///     expand_to_include_y(400)
+///
+#[pyfunction]
+unsafe fn expand_to_include_y(y: f32) -> PyResult<()> {
+    let ui = current_ui(&UI)?;
+
+    ui.expand_to_include_y(y);
+    Ok(())
+}
 
 #[pymodule]
 mod pyegui {
@@ -2305,6 +2446,8 @@ mod pyegui {
     #[pymodule_export]
     use super::selectable_value;
     #[pymodule_export]
+    use super::selectable_label;
+    #[pymodule_export]
     use super::combo_box;
     #[pymodule_export]
     use super::progress;
@@ -2344,5 +2487,20 @@ mod pyegui {
     use super::menu_image_text_button;
     #[pymodule_export]
     use super::scroll_to_cursor;
-
+    #[pymodule_export]
+    use super::set_height;
+    #[pymodule_export]
+    use super::set_max_height;
+    #[pymodule_export]
+    use super::set_min_height;
+    #[pymodule_export]
+    use super::set_width;
+    #[pymodule_export]
+    use super::set_max_width;
+    #[pymodule_export]
+    use super::set_min_width;
+    #[pymodule_export]
+    use super::expand_to_include_x;
+    #[pymodule_export]
+    use super::expand_to_include_y;
 }

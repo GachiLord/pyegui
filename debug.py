@@ -11,6 +11,8 @@ def update_func(ctx):
         heading("I'm pretty good at that")
     heading("I'm pretty good at that")
 
+    selectable_label(True, "check me")
+
 
 run_native("Debug", update_func)
 
